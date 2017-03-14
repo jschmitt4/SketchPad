@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SketchPad</string>
+    <string name ="developersString">Developers</string>
+    <string name ="danielChoi">Daniel Choi</string>
+    <string name ="danielChoiInfo">Information Systems \nw/Mobile software technology"</string>
+    <string name ="charlesFanin">Charles Fannin</string>
+    <string name ="charlesFaninInfo">Internet and web technology \nw/Mobile software technology</string>
+    <string name ="johnSchmitt">John Schmitt</string>
+    <string name ="johnSchmittInfo">Networking\nw/Mobile software technology</string>
+    <string name ="logoDescription">House Logo</string>
 </resources>

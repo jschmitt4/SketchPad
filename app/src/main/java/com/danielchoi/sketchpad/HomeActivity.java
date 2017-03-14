@@ -18,17 +18,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        ImageButton startIb = (ImageButton) findViewById(R.id.startImageButton);
-        startIb.setOnClickListener(this);
+        findViewById(R.id.startImageButton).setOnClickListener(this);
+        findViewById(R.id.aboutButton).setOnClickListener(this);
+
 
     }
 
     @Override
     public void onClick (View view){
-
+        vb.vibrate(10);
         if (view.getId() == R.id.startImageButton) {
-            vb.vibrate(10);
             Intent startIntent = new Intent(getApplicationContext(), SketchActivity.class);
+            startActivity(startIntent);
+        }else if(view.getId() == R.id.aboutButton){
+            Intent startIntent = new Intent(getApplicationContext(), AboutActivity.class);
             startActivity(startIntent);
         }
     }
