@@ -23,7 +23,7 @@
             android:theme="@style/SketchTheme"/>
 
         <activity android:name=".AboutActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
