@@ -8,4 +8,11 @@
     <string name ="johnSchmitt">John Schmitt</string>
     <string name ="johnSchmittInfo">Networking\nw/Mobile software technology</string>
     <string name ="logoDescription">House Logo</string>
+
+    <!-- Features -->
+    <string name="start_new">New</string>
+    <string name="brush">Brush</string>
+    <string name="erase">Erase</string>
+    <string name="save">Save</string>
+    <string name="paint">Paint</string>
 </resources>
