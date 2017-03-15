@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import static android.R.attr.onClick;
 
@@ -35,9 +36,7 @@ implements View.OnClickListener{
             if(menuOpen){
                 menuOpen = false;
             }else menuOpen = true;
-
             displayButtons();
-
         }
 
     }
@@ -45,13 +44,10 @@ implements View.OnClickListener{
     private void displayButtons(){
 
         if(menuOpen) {
-            for (int id : display) {
-                findViewById(id).setVisibility(View.VISIBLE);
-            }
+            findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
+
         }else {
-            for(int id : display){
-                findViewById(id).setVisibility(View.INVISIBLE);
-            }
+            findViewById(R.id.optionsLayout).setVisibility(View.INVISIBLE);
         }
 
     }
