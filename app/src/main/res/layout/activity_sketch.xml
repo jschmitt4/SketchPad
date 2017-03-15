@@ -14,114 +14,118 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/menuButton">
 
         <com.danielchoi.sketchpad.DrawingView
-            android:layout_width="200dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="563dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="3dp"
-            android:layout_weight="1"
             android:background="#FFFFFFFF"/>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#009999">
 
-            <ImageButton
-                android:layout_width="50dp"
-                app:srcCompat="@drawable/circle_menu"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="#00000000"
-                android:id="@+id/menuButton"
-                android:scaleType="fitXY"
-                android:layout_height="50dp" />
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/pencil"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:id="@+id/pencil_imageButton"
-                android:scaleType="fitXY"
-                android:background="#00000000" />
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/rectangle"
-                android:id="@+id/rect_imageButton"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:scaleType="fitXY"
-                android:background="#00000000" />
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/red"
-                android:id="@+id/red_imageButton"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:scaleType="fitXY"
-                android:background="#00000000"/>
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/blue"
-                android:id="@+id/blue_imageButton"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:scaleType="fitXY"
-                android:background="#00000000"/>
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/yellow"
-                android:id="@+id/yellow_imageButton"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:scaleType="fitXY"
-                android:background="#00000000"/>
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/white"
-                android:id="@+id/white_imageButton"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:scaleType="fitXY"
-                android:background="#00000000"/>
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/black"
-                android:id="@+id/black_imageButton"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:scaleType="fitXY"
-                android:background="#00000000"/>
-        </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/optionsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#009999"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/pencil"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/pencil_imageButton"
+            android:scaleType="fitXY"
+            android:background="#00000000" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/rectangle"
+            android:id="@+id/rect_imageButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:background="#00000000" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/red"
+            android:id="@+id/red_imageButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:background="#00000000"/>
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/blue"
+            android:id="@+id/blue_imageButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:background="#00000000"/>
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/yellow"
+            android:id="@+id/yellow_imageButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:background="#00000000"/>
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/white"
+            android:id="@+id/white_imageButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:background="#00000000"/>
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/black"
+            android:id="@+id/black_imageButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY"
+            android:background="#00000000"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_width="50dp"
+        app:srcCompat="@drawable/circle_menu"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#00000000"
+        android:id="@+id/menuButton"
+        android:scaleType="fitXY"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
