@@ -13,7 +13,7 @@ import static android.R.attr.onClick;
 public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
 
-    public int display[] = {R.id.pencil_imageButton, R.id.rect_imageButton, R.id.red_imageButton, R.id.blue_imageButton, R.id.yellow_imageButton, R.id.white_imageButton, R.id.black_imageButton, };
+    public int display[] = {R.id.pencil_imageButton, R.id.rect_imageButton, R.id.new_imageButton, R.id.open_imageButton, R.id.eraser_imageButton, R.id.save_imageButton };
     private boolean menuOpen = false;
     Vibrator vb;
 
