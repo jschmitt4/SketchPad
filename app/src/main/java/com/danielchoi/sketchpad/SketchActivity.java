@@ -15,6 +15,9 @@ implements View.OnClickListener{
 
     public int display[] = {R.id.pencil_imageButton, R.id.rect_imageButton, R.id.new_imageButton, R.id.open_imageButton, R.id.eraser_imageButton, R.id.save_imageButton };
     private boolean menuOpen = false;
+    // Used for the Drawing and color paint
+    private DrawingView drawView;
+    private ImageButton currPaint;
     Vibrator vb;
 
     @Override
@@ -22,6 +25,11 @@ implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sketch);
         vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        drawView = (DrawingView)findViewById(R.id.drawing);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow1); // to select color
+        currPaint = (ImageButton)paintLayout.getChildAt(0);
+        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
 
         displayButtons();
         setOnClicks();
@@ -39,6 +47,22 @@ implements View.OnClickListener{
             displayButtons();
         }
 
+    }
+
+    // XML onClick event
+    public void paintClicked(View view){
+        //user chosen color
+        if(view!=currPaint){
+            // Update color to user selection
+            ImageButton imgView = (ImageButton)view;
+            String color = view.getTag().toString();
+            drawView.setColor(color);
+
+            // Update UI to reflect chosen paint and set previous back to normal
+            imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+            currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
+            currPaint=(ImageButton)view;
+        }
     }
 
     private void displayButtons(){
