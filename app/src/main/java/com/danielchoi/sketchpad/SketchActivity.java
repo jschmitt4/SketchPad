@@ -27,8 +27,8 @@ implements View.OnClickListener{
         vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         drawView = (DrawingView)findViewById(R.id.drawing);
-        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow1); // to select color
-        currPaint = (ImageButton)paintLayout.getChildAt(0);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // to select color
+        currPaint = (ImageButton)paintLayout.getChildAt(5);
         currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
 
         displayButtons();
@@ -69,9 +69,11 @@ implements View.OnClickListener{
 
         if(menuOpen) {
             findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
+            findViewById(R.id.swatches).setVisibility(View.VISIBLE);
 
         }else {
             findViewById(R.id.optionsLayout).setVisibility(View.INVISIBLE);
+            findViewById(R.id.swatches).setVisibility(View.INVISIBLE);
         }
 
     }
