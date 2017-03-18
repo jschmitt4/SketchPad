@@ -29,7 +29,7 @@ implements View.OnClickListener{
         drawView = (DrawingView)findViewById(R.id.drawing);
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // to select color
         currPaint = (ImageButton)paintLayout.getChildAt(5);
-        currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
+        currPaint.setImageResource(R.drawable.paint_pressed);
 
         displayButtons();
         setOnClicks();
@@ -59,8 +59,8 @@ implements View.OnClickListener{
             drawView.setColor(color);
 
             // Update UI to reflect chosen paint and set previous back to normal
-            imgView.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
-            currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
+            imgView.setImageResource(R.drawable.paint_pressed);
+            currPaint.setImageResource(R.drawable.paint);
             currPaint=(ImageButton)view;
         }
     }
