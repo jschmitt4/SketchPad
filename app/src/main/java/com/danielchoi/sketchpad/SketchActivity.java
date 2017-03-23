@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import static android.R.attr.onClick;
 
@@ -33,6 +34,7 @@ implements View.OnClickListener{
 
         displayButtons();
         setOnClicks();
+
     }
 
     @Override
@@ -45,6 +47,9 @@ implements View.OnClickListener{
                 menuOpen = false;
             }else menuOpen = true;
             displayButtons();
+        }
+        if(view.getId() == R.id.rect_imageButton){
+            Toast.makeText(this, "Rectangle Button", Toast.LENGTH_SHORT).show();
         }
 
     }
