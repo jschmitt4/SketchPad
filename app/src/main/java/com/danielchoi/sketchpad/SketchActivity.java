@@ -14,11 +14,13 @@ import static android.R.attr.onClick;
 public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
 
+    //Array of all the buttons
     public int display[] = {R.id.pencil_imageButton,  R.id.rect_imageButton, R.id.new_imageButton, R.id.open_imageButton, R.id.eraser_imageButton, R.id.save_imageButton, R.id.brush_imageButton, R.id.marker_imageButton, R.id.line_imageButton};
     private boolean menuOpen = false;
     // Used for the Drawing and color paint
     private DrawingView drawView;
     private ImageButton currPaint;
+    private View lastView;
     Vibrator vb;
 
     @Override
@@ -36,6 +38,7 @@ implements View.OnClickListener{
         setOnClicks();
     }
 
+
     @Override
     public void onClick(View view) {
         vb.vibrate(10);
@@ -50,26 +53,32 @@ implements View.OnClickListener{
 
         if(view.getId() == R.id.pencil_imageButton){
             drawView.changeStrokeWidth(1);
+            lastView = view;
         }else if(view.getId() == R.id.marker_imageButton){
             drawView.changeStrokeWidth(8);
+            lastView = view;
         }else if(view.getId() == R.id.brush_imageButton){
             drawView.changeStrokeWidth(20);
+            lastView = view;
         }else if(view.getId() == R.id.line_imageButton){
 
-
+            lastView = view;
         }else if(view.getId() == R.id.rect_imageButton){
 
-
+            lastView = view;
         }else if(view.getId() == R.id.eraser_imageButton){
             drawView.eraser();
+        }else if(view.getId() == R.id.new_imageButton){
+            confirmPrompt();
+            drawView.newSheet();
+            updateStrokeSelectView(lastView);
         }
-
-
 
     }
 
     /**
      * This takes the view from on click to show which option is clicked.
+     * Highlights the button with white
      * @param v
      */
     public void updateStrokeSelectView(View v){
@@ -80,9 +89,7 @@ implements View.OnClickListener{
             }else{
                 findViewById(id).setBackgroundColor(Color.parseColor("#009999"));
             }
-
         }
-
 
     }
 
@@ -107,6 +114,9 @@ implements View.OnClickListener{
         }
     }
 
+    /**
+     * Hides or shows the options by clicking the menu button
+     */
     private void displayButtons(){
 
         if(menuOpen) {
@@ -119,11 +129,17 @@ implements View.OnClickListener{
         }
 
     }
+
     private void setOnClicks(){
         findViewById(R.id.menuButton).setOnClickListener(this);
         for (int id : display) {
             findViewById(id).setOnClickListener(this);
         }
+
+    }
+
+    private void confirmPrompt(){
+
 
     }
 

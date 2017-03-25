@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.graphics.Bitmap;
@@ -65,6 +66,7 @@ public class DrawingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
+
     }
 
     @Override
@@ -115,6 +117,11 @@ public class DrawingView extends View {
         drawPaint.setColor(Color.parseColor("#FFFFFF"));
         drawPaint.setStrokeWidth(strokeWidth);
         drawPaint.setStrokeCap(Paint.Cap.SQUARE);
+    }
+
+    public void newSheet(){
+        drawCanvas.drawColor(Color.parseColor("#FFFFFF"));
+        invalidate();
     }
 
 }
