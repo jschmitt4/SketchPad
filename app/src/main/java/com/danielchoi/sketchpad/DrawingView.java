@@ -3,6 +3,8 @@ package com.danielchoi.sketchpad;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -29,6 +31,12 @@ public class DrawingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
+    public float defaultStrokeWidth = 2;
+
+    public float strokeWidth;
+
+    private DisplayMetrics dm;
+
     public DrawingView(Context context, AttributeSet attrs){
         super(context, attrs);
         setupDrawing();
@@ -41,7 +49,9 @@ public class DrawingView extends View {
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
         // Sets up a temporary brush size
-        drawPaint.setStrokeWidth(20);
+        dm = getResources().getDisplayMetrics();
+        float strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,defaultStrokeWidth,dm);
+        drawPaint.setStrokeWidth(strokeWidth);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -92,4 +102,19 @@ public class DrawingView extends View {
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
     }
+
+    public void changeStrokeWidth(int dp){
+        strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,dp,dm);
+        drawPaint.setStrokeWidth(strokeWidth);
+        drawPaint.setStrokeCap(Paint.Cap.ROUND);
+        drawPaint.setColor(paintColor);
+    }
+
+    public void eraser(){
+        strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,dm);
+        drawPaint.setColor(Color.parseColor("#FFFFFF"));
+        drawPaint.setStrokeWidth(strokeWidth);
+        drawPaint.setStrokeCap(Paint.Cap.SQUARE);
+    }
+
 }
