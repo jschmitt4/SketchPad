@@ -1,14 +1,17 @@
 package com.danielchoi.sketchpad;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ResourceCursorTreeAdapter;
 
 import static android.R.attr.onClick;
 
@@ -22,6 +25,7 @@ implements View.OnClickListener{
     private DrawingView drawView;
     private ImageButton currPaint;
     private View lastView;
+    private static int numOfOptions = 9;
     Vibrator vb;
     boolean erase = false;
 
@@ -80,7 +84,8 @@ implements View.OnClickListener{
                 confirmPrompt();
                 drawView.newSheet();
                 erase = false;
-                updateSelectView(lastView); //To ensure the
+                if(lastView!= null) updateSelectView(lastView);
+                else updateSelectView(findViewById(R.id.pencil_imageButton));
             }
 
             showPallet();
@@ -135,6 +140,7 @@ implements View.OnClickListener{
      */
     private void displayButtons(){
 
+        setButtonSizeByScreen();
         if(menuOpen) {
             findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
             showPallet();
@@ -161,9 +167,23 @@ implements View.OnClickListener{
 
     }
 
-    private void confirmPrompt(){
+    private void confirmPrompt(){}
 
+    private void setButtonSizeByScreen(){
 
+        LinearLayout options = (LinearLayout) findViewById(R.id.optionsLayout);
+        int buttonSize = Math.round(ScreenHeight()/numOfOptions);
+
+        //findViewById(R.id.pencil_imageButton).setLayoutParams();
+
+    }
+
+    private float ScreenHeight(){
+        LinearLayout options = (LinearLayout) findViewById(R.id.optionsLayout);
+        Resources r = options.getResources();
+        DisplayMetrics d = r.getDisplayMetrics();
+
+        return d.heightPixels;
     }
 
 }

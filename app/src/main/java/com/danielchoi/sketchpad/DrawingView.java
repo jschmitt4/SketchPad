@@ -13,6 +13,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+
 /**
  * Created by JT on 3/14/2017.
  */
@@ -23,6 +25,7 @@ public class DrawingView extends View {
      */
     //drawing path
     private Path drawPath;
+    private ArrayList<Path> drawPaths = new ArrayList<Path>();
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint, paintLine;
     //initial color
@@ -120,7 +123,6 @@ public class DrawingView extends View {
 
 
         }else if(currentMode == Mode.RECT){
-
 
         }
         invalidate();
