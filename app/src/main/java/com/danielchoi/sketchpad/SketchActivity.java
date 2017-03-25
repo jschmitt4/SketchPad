@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -22,6 +23,7 @@ implements View.OnClickListener{
     private ImageButton currPaint;
     private View lastView;
     Vibrator vb;
+    boolean erase = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,34 +46,48 @@ implements View.OnClickListener{
         vb.vibrate(10);
 
         if(view.getId() != R.id.menuButton){
-            updateStrokeSelectView(view);
-        }else{
-            if(menuOpen)menuOpen = false;
+            updateSelectView(view);
+
+            if (view.getId() == R.id.pencil_imageButton) {
+                drawView.changeStrokeWidth(1);
+                drawView.setCurrentMode("DRAW");
+                erase = false;
+                lastView = view;
+            } else if (view.getId() == R.id.marker_imageButton) {
+                drawView.changeStrokeWidth(8);
+                drawView.setCurrentMode("DRAW");
+                erase = false;
+                lastView = view;
+            } else if (view.getId() == R.id.brush_imageButton) {
+                drawView.changeStrokeWidth(20);
+                drawView.setCurrentMode("DRAW");
+                erase = false;
+                lastView = view;
+
+            } else if (view.getId() == R.id.line_imageButton) {
+                drawView.setCurrentMode("LINE");
+                erase = false;
+                lastView = view;
+            } else if (view.getId() == R.id.rect_imageButton) {
+                drawView.setCurrentMode("RECT");
+                erase = false;
+                lastView = view;
+            } else if (view.getId() == R.id.eraser_imageButton) {
+                drawView.setCurrentMode("DRAW");
+                erase = true;
+                drawView.eraser(); //Selects eraser
+            } else if (view.getId() == R.id.new_imageButton) {
+                confirmPrompt();
+                drawView.newSheet();
+                erase = false;
+                updateSelectView(lastView); //To ensure the
+            }
+
+            showPallet();
+        }else {
+            if (menuOpen) menuOpen = false;
             else menuOpen = true;
             displayButtons();
-        }
-
-        if(view.getId() == R.id.pencil_imageButton){
-            drawView.changeStrokeWidth(1);
-            lastView = view;
-        }else if(view.getId() == R.id.marker_imageButton){
-            drawView.changeStrokeWidth(8);
-            lastView = view;
-        }else if(view.getId() == R.id.brush_imageButton){
-            drawView.changeStrokeWidth(20);
-            lastView = view;
-        }else if(view.getId() == R.id.line_imageButton){
-
-            lastView = view;
-        }else if(view.getId() == R.id.rect_imageButton){
-
-            lastView = view;
-        }else if(view.getId() == R.id.eraser_imageButton){
-            drawView.eraser();
-        }else if(view.getId() == R.id.new_imageButton){
-            confirmPrompt();
-            drawView.newSheet();
-            updateStrokeSelectView(lastView);
         }
 
     }
@@ -81,7 +97,7 @@ implements View.OnClickListener{
      * Highlights the button with white
      * @param v
      */
-    public void updateStrokeSelectView(View v){
+    public void updateSelectView(View v){
 
         for(int id : display){
             if(v.getId() == id){
@@ -90,18 +106,18 @@ implements View.OnClickListener{
                 findViewById(id).setBackgroundColor(Color.parseColor("#009999"));
             }
         }
-
     }
 
     /**
      * Each swatch imageview has a Tag with a string value of the color
      * Imagebutton onClick calls paintClicked
-     * The view is the view of the image clicked
+     * Sets color of the brush
+     * Changes color in UI to show that it has been selected.
      * @param view
      */
     public void paintClicked(View view){
         //user chosen color
-        if(view!=currPaint){
+        if(view!=currPaint && !erase){
             // Update color to user selection
             ImageButton imgView = (ImageButton)view;
             String color = view.getTag().toString();
@@ -121,15 +137,22 @@ implements View.OnClickListener{
 
         if(menuOpen) {
             findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
-            findViewById(R.id.swatches).setVisibility(View.VISIBLE);
+            showPallet();
 
         }else {
             findViewById(R.id.optionsLayout).setVisibility(View.INVISIBLE);
             findViewById(R.id.swatches).setVisibility(View.INVISIBLE);
         }
-
     }
 
+    /**
+     * A helper method to hide the pallet if eraser is chosen.
+     */
+    private void showPallet(){
+        if(erase)findViewById(R.id.swatches).setVisibility(View.INVISIBLE);
+        else findViewById(R.id.swatches).setVisibility(View.VISIBLE);
+
+    }
     private void setOnClicks(){
         findViewById(R.id.menuButton).setOnClickListener(this);
         for (int id : display) {
