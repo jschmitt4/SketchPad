@@ -11,8 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ResourceCursorTreeAdapter;
-
 import static android.R.attr.onClick;
 
 public class SketchActivity extends AppCompatActivity
@@ -42,6 +42,7 @@ implements View.OnClickListener{
 
         displayButtons();
         setOnClicks();
+
     }
 
 
@@ -72,10 +73,12 @@ implements View.OnClickListener{
                 drawView.setCurrentMode("LINE");
                 erase = false;
                 lastView = view;
+                Toast.makeText(this, "Line Button", Toast.LENGTH_SHORT).show();
             } else if (view.getId() == R.id.rect_imageButton) {
                 drawView.setCurrentMode("RECT");
                 erase = false;
                 lastView = view;
+                Toast.makeText(this, "Rectangle Button", Toast.LENGTH_SHORT).show();
             } else if (view.getId() == R.id.eraser_imageButton) {
                 drawView.setCurrentMode("DRAW");
                 erase = true;
