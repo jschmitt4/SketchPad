@@ -2,6 +2,7 @@ package com.danielchoi.sketchpad;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,7 +25,7 @@ public class DrawingView extends View {
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
-    private Paint drawPaint, canvasPaint, paintLine;
+    private Paint drawPaint, canvasPaint, paintLine, rectPaint;
     //initial color
     private int paintColor = 0xFF000000;
     //canvas
@@ -120,8 +121,9 @@ public class DrawingView extends View {
 
 
         }else if(currentMode == Mode.RECT){
-
-
+            Rect rect = new Rect();
+            rect.set(210,125,250,175);
+            drawCanvas.drawRect(rect, drawPaint);
         }
         invalidate();
         return true;
