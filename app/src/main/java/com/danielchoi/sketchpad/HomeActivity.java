@@ -20,6 +20,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.startImageButton).setOnClickListener(this);
         findViewById(R.id.aboutButton).setOnClickListener(this);
+        findViewById(R.id.loadButton).setOnClickListener(this);
 
 
     }

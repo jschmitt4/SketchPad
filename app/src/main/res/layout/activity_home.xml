@@ -9,25 +9,39 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.danielchoi.sketchpad.HomeActivity">
+    tools:context="com.danielchoi.sketchpad.HomeActivity"
+    android:background="@drawable/paper">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="About"
+    <ImageButton
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:src="@drawable/about"
+        android:scaleType="centerInside"
+        android:background="#00000000"
         android:id="@+id/aboutButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="31dp" />
+         />
 
     <ImageButton
-        android:layout_width="300dp"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:src="@drawable/loadsketch"
+        android:scaleType="centerInside"
+        android:background="#00000000"
+        android:id="@+id/loadButton"
+        android:layout_above="@id/aboutButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp" />
+
+    <ImageButton
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/draw"
+        android:src="@drawable/sketch"
         android:scaleType="centerInside"
         android:background="#00000000"
         android:id="@+id/startImageButton"
-        android:layout_marginBottom="113dp"
-        android:layout_above="@+id/aboutButton"
+        android:layout_marginTop="173dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
