@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.graphics.Bitmap;
@@ -38,10 +37,11 @@ public class DrawingView extends View {
     static enum Mode {DRAW, LINE, RECT};
     private Mode currentMode = Mode.DRAW;
 
-    private int rectXStart;
-    private int rectYStart;
-    private int rectXFinish;
-    private int rectYFinish;
+    //line/rectangle start and finish coordinates.
+    private int xStart;
+    private int yStart;
+    private int xFinish;
+    private int yFinish;
 
     /**
      * Constructors to set up the widget
@@ -128,14 +128,14 @@ public class DrawingView extends View {
         }else if(currentMode == Mode.RECT){
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    rectXStart = (int) event.getX();
-                    rectYStart = (int) event.getY();
+                    xStart = (int) event.getX();
+                    yStart = (int) event.getY();
                     break;
                 case MotionEvent.ACTION_UP:
-                    rectXFinish = (int) event.getX();
-                    rectYFinish = (int) event.getY();
+                    xFinish = (int) event.getX();
+                    yFinish = (int) event.getY();
                     Rect rect = new Rect();
-                    rect.set(rectXStart,rectYStart,rectXFinish,rectYFinish);
+                    rect.set(xStart, yStart, xFinish, yFinish);
                     drawCanvas.drawRect(rect, drawPaint);
                     drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
