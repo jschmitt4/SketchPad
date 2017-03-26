@@ -13,6 +13,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+
 /**
  * Created by JT on 3/14/2017.
  */
@@ -23,6 +25,7 @@ public class DrawingView extends View {
      */
     //drawing path
     private Path drawPath;
+    private ArrayList<Path> drawPaths = new ArrayList<Path>();
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint, paintLine, rectPaint;
     //initial color
@@ -33,6 +36,7 @@ public class DrawingView extends View {
     private Bitmap canvasBitmap;
     public float defaultStrokeWidth = 2;
     public float strokeWidth;
+    public int screenHeight;
     private DisplayMetrics dm;
     static enum Mode {DRAW, LINE, RECT};
     private Mode currentMode = Mode.DRAW;
@@ -92,6 +96,7 @@ public class DrawingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
+        screenHeight = h;
 
     }
 
@@ -183,9 +188,11 @@ public class DrawingView extends View {
     public void newSheet(){
         drawCanvas.drawColor(Color.parseColor("#FFFFFF"));
         invalidate();
-
     }
 
+    public int getScreenHeight(){
+        return screenHeight;
+    }
     public void setCurrentMode(String m){
         switch (m) {
             case "DRAW":

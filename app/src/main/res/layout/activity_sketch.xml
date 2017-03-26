@@ -194,7 +194,6 @@
         android:id="@+id/optionsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
         android:background="#009999"
         android:layout_alignTop="@+id/drawingView"
         android:layout_alignEnd="@+id/drawingView">
@@ -274,6 +273,7 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:padding="4dp"
             app:srcCompat="@drawable/eraser"
             android:id="@+id/eraser_imageButton"
             android:scaleType="fitXY"

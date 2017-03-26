@@ -1,16 +1,18 @@
 package com.danielchoi.sketchpad;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import android.widget.ResourceCursorTreeAdapter;
 import static android.R.attr.onClick;
 
 public class SketchActivity extends AppCompatActivity
@@ -23,6 +25,7 @@ implements View.OnClickListener{
     private DrawingView drawView;
     private ImageButton currPaint;
     private View lastView;
+    private static int numOfOptions = 9;
     Vibrator vb;
     boolean erase = false;
 
@@ -84,7 +87,8 @@ implements View.OnClickListener{
                 confirmPrompt();
                 drawView.newSheet();
                 erase = false;
-                updateSelectView(lastView); //To ensure the
+                if(lastView!= null) updateSelectView(lastView);
+                else updateSelectView(findViewById(R.id.pencil_imageButton));
             }
 
             showPallet();
@@ -139,6 +143,7 @@ implements View.OnClickListener{
      */
     private void displayButtons(){
 
+        setButtonSizeByScreen();
         if(menuOpen) {
             findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
             showPallet();
@@ -165,9 +170,18 @@ implements View.OnClickListener{
 
     }
 
-    private void confirmPrompt(){
+    private void confirmPrompt(){}
 
-
+    /**
+     * Gets the screen size from the canvas.
+     * This dynamically changes the size of the buttons so that it is correct on all screens
+     */
+    private void setButtonSizeByScreen(){
+        float height = View.MeasureSpec.getSize(drawView.getScreenHeight());
+        int buttonSize = Math.round(height/(numOfOptions));
+        for(int i: display) {
+            findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+        }
     }
 
 }
