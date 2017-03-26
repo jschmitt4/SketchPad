@@ -123,8 +123,20 @@ public class DrawingView extends View {
                     return false;
             }
         }else if(currentMode == Mode.LINE){
-
-
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    xStart = (int) event.getX();
+                    yStart = (int) event.getY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    xFinish = (int) event.getX();
+                    yFinish = (int) event.getY();
+                    drawCanvas.drawLine(xStart,yStart,xFinish,yFinish,drawPaint);
+                    drawPath.reset();
+                    break;
+                default:
+                    return false;
+            }
         }else if(currentMode == Mode.RECT){
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
