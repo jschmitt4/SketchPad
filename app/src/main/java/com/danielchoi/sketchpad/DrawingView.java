@@ -38,6 +38,11 @@ public class DrawingView extends View {
     static enum Mode {DRAW, LINE, RECT};
     private Mode currentMode = Mode.DRAW;
 
+    private int rectXStart;
+    private int rectYStart;
+    private int rectXFinish;
+    private int rectYFinish;
+
     /**
      * Constructors to set up the widget
      * @param context
@@ -121,9 +126,23 @@ public class DrawingView extends View {
 
 
         }else if(currentMode == Mode.RECT){
-            Rect rect = new Rect();
-            rect.set(210,125,250,175);
-            drawCanvas.drawRect(rect, drawPaint);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    rectXStart = (int) event.getX();
+                    rectYStart = (int) event.getY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    rectXFinish = (int) event.getX();
+                    rectYFinish = (int) event.getY();
+                    Rect rect = new Rect();
+                    rect.set(rectXStart,rectYStart,rectXFinish,rectYFinish);
+                    drawCanvas.drawRect(rect, drawPaint);
+                    drawCanvas.drawPath(drawPath, drawPaint);
+                    drawPath.reset();
+                    break;
+                default:
+                    return false;
+            }
         }
         invalidate();
         return true;
