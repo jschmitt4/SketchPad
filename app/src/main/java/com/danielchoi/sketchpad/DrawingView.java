@@ -132,7 +132,6 @@ public class DrawingView extends View {
                     xFinish = (int) event.getX();
                     yFinish = (int) event.getY();
                     drawCanvas.drawLine(xStart,yStart,xFinish,yFinish,drawPaint);
-                    drawPath.reset();
                     break;
                 default:
                     return false;
@@ -149,7 +148,6 @@ public class DrawingView extends View {
                     Rect rect = new Rect();
                     rect.set(xStart, yStart, xFinish, yFinish);
                     drawCanvas.drawRect(rect, drawPaint);
-                    drawCanvas.drawPath(drawPath, drawPaint);
                     drawPath.reset();
                     break;
                 default:
