@@ -204,6 +204,7 @@
             app:srcCompat="@drawable/newfile"
             android:id="@+id/new_imageButton"
             android:scaleType="fitXY"
+            android:padding="2dp"
             android:background="#00000000"
             android:contentDescription="@string/paint"/>
 
