@@ -169,21 +169,16 @@ implements View.OnClickListener{
 
     private void confirmPrompt(){}
 
+    /**
+     * Gets the screen size from the canvas.
+     * This dynamically changes the size of the buttons so that it is correct on all screens
+     */
     private void setButtonSizeByScreen(){
-
-        LinearLayout options = (LinearLayout) findViewById(R.id.optionsLayout);
-        int buttonSize = Math.round(ScreenHeight()/numOfOptions);
-
-        //findViewById(R.id.pencil_imageButton).setLayoutParams();
-
-    }
-
-    private float ScreenHeight(){
-        LinearLayout options = (LinearLayout) findViewById(R.id.optionsLayout);
-        Resources r = options.getResources();
-        DisplayMetrics d = r.getDisplayMetrics();
-
-        return d.heightPixels;
+        float height = View.MeasureSpec.getSize(drawView.getScreenHeight());
+        int buttonSize = Math.round(height/(numOfOptions));
+        for(int i: display) {
+            findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+        }
     }
 
 }

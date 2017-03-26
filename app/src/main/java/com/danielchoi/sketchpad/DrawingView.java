@@ -36,6 +36,7 @@ public class DrawingView extends View {
     private Bitmap canvasBitmap;
     public float defaultStrokeWidth = 2;
     public float strokeWidth;
+    public int screenHeight;
     private DisplayMetrics dm;
     static enum Mode {DRAW, LINE, RECT};
     private Mode currentMode = Mode.DRAW;
@@ -89,6 +90,7 @@ public class DrawingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
+        screenHeight = h;
 
     }
 
@@ -152,9 +154,11 @@ public class DrawingView extends View {
     public void newSheet(){
         drawCanvas.drawColor(Color.parseColor("#FFFFFF"));
         invalidate();
-
     }
 
+    public int getScreenHeight(){
+        return screenHeight;
+    }
     public void setCurrentMode(String m){
         switch (m) {
             case "DRAW":
