@@ -298,32 +298,6 @@
                 android:background="#00000000"
                 android:contentDescription="rectangle"/>
         </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layoutDirection="rtl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#00000000"
-            android:id="@+id/size_LL"
-            >
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@drawable/dot"
-                android:id="@+id/size_Option1"
-                android:scaleType="fitXY"
-                android:background="#00000000"
-                android:contentDescription="@string/paint"/>
-            <ImageButton
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                app:srcCompat="@drawable/dot"
-                android:id="@+id/size_Option2"
-                android:scaleType="fitXY"
-                android:background="#00000000"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:contentDescription="@string/paint"/>
-        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -343,7 +317,71 @@
                 android:contentDescription="@string/paint"/>
         </LinearLayout>
 
-</LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:id="@+id/size_LL"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/size_Option1_Container">
+
+                <ImageButton
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/dot"
+                    android:id="@+id/size_Option1"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="@string/paint"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/size_Option2_Container">
+
+                <ImageButton
+
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/dot"
+                    android:id="@+id/size_Option2"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="@string/paint"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="4dp"
+                app:srcCompat="@drawable/aa"
+                android:id="@+id/aliasing_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </RelativeLayout>

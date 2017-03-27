@@ -35,7 +35,18 @@ public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
 
     //Array of all the buttons
-    public int display[] = {R.id.util_Option1, R.id.util_Option2, R.id.shape_Option1, R.id.shape_Option2,R.id.size_Option2, R.id.shape_Option1, R.id.new_imageButton, R.id.eraser_imageButton, R.id.save_imageButton};
+    public int display[] = {
+            R.id.util_Option1,
+            R.id.util_Option2,
+            R.id.shape_Option1,
+            R.id.shape_Option2,
+            R.id.shape_Option1,
+            R.id.size_Option1,
+            R.id.size_Option2,
+            R.id.new_imageButton,
+            R.id.eraser_imageButton,
+            R.id.save_imageButton,
+            R.id.aliasing_imageButton};
     private boolean menuOpen = false;
     // Used for the Drawing and color paint
     private DrawingView drawView;
@@ -49,6 +60,7 @@ implements View.OnClickListener{
     boolean longClick = false;
     boolean utilSwitched = false;
     boolean shapeSwitched = false;
+    boolean aliasing = true;
     ImageButton selectView;
     Animation selectAnimationShake;
 
@@ -68,7 +80,6 @@ implements View.OnClickListener{
         hideAllExpansion();
         displayButtons();
         setOnClicks();
-        checkLocation();
 
     }
 
@@ -113,7 +124,19 @@ implements View.OnClickListener{
                 lastView = findViewById(R.id.shape_Option1);
                 swap(view.getId());
                 hideAllExpansion();
-            } else if (view.getId() == R.id.eraser_imageButton) {
+
+            }else if (view.getId() == R.id.size_Option1) {
+                if(!longClick) {
+                    if(lastView!= null) updateSelectView(lastView);
+                    else updateSelectView(findViewById(R.id.util_Option1));
+                    hideAllExpansion();
+                }longClick = false;
+
+            } else if (view.getId() == R.id.size_Option2) {
+
+                hideAllExpansion();
+
+            }else if (view.getId() == R.id.eraser_imageButton) {
                 drawView.setCurrentMode("DRAW");
                 erase = true;
                 drawView.eraser(); //Selects eraser
@@ -124,15 +147,12 @@ implements View.OnClickListener{
                 confirmClear();
                 if(lastView!= null) updateSelectView(lastView);
                 else updateSelectView(findViewById(R.id.util_Option1));
-                else updateSelectView(findViewById(R.id.pencil_imageButton));
+
             } else if (view.getId() == R.id.aliasing_imageButton) {
-                if(!aliasing){
-                    aliasing = true;
-                    Toast.makeText(this, "Aliasing True", Toast.LENGTH_SHORT).show();
-                } else {
-                    aliasing = false;
-                    Toast.makeText(this, "Aliasing False", Toast.LENGTH_SHORT).show();
-                }
+                setAlias();
+                hideAllExpansion();
+                if(lastView!= null) updateSelectView(lastView);
+                else updateSelectView(findViewById(R.id.util_Option1));
 
             } else if(view.getId() == R.id.save_imageButton){
                 hideAllExpansion();
@@ -238,6 +258,16 @@ implements View.OnClickListener{
                 return false;
             }
         });
+
+        findViewById(R.id.size_Option1).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                longClick = true;
+                expand(view);
+                return false;
+            }
+        });
+
 
     }
 
@@ -354,18 +384,6 @@ implements View.OnClickListener{
      * @param grantResults
      */
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {saveImage();}
-                return;
-            }
-        }
-    }
-
     /**
      * Gets the screen size from the canvas.
      * This dynamically changes the size of the buttons so that it is correct on all screens
@@ -374,7 +392,15 @@ implements View.OnClickListener{
         float height = View.MeasureSpec.getSize(drawView.getScreenHeight());
         buttonSize = Math.round(height/(10));
         for(int i: display) {
-            findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+            if(i == R.id.size_Option1){
+
+                findViewById(R.id.size_Option1_Container).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+
+            }else if(i == R.id.size_Option2){
+
+                findViewById(R.id.size_Option2_Container).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+            }
+            else findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
         }
 
         /**
@@ -382,7 +408,7 @@ implements View.OnClickListener{
          * This is done so even if I also the above layout's background it does change it.
          */
         TextView tv = (TextView) findViewById(R.id.backdrop);
-        tv.setLayoutParams(new RelativeLayout.LayoutParams(buttonSize, (buttonSize * 6)));
+        tv.setLayoutParams(new RelativeLayout.LayoutParams(buttonSize, (buttonSize * 7)));
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tv.getLayoutParams();
         params.addRule(RelativeLayout.ALIGN_END, R.id.drawingView);
         params.addRule(RelativeLayout.ALIGN_TOP, R.id.drawingView);
@@ -423,11 +449,19 @@ implements View.OnClickListener{
             findViewById(R.id.util_Option2).setVisibility(View.VISIBLE);
             findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#009999"));
             findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
 
         }else if(v.getId() == R.id.shape_Option1){
             findViewById(R.id.shape_Option2).setVisibility(View.VISIBLE);
             findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#009999"));
             findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        }
+        else if(v.getId() == R.id.size_Option1){
+            findViewById(R.id.size_Option2_Container).setVisibility(View.VISIBLE);
+            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#009999"));
+            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
         }
     }
 
@@ -481,11 +515,23 @@ implements View.OnClickListener{
     private void hideAllExpansion(){
         findViewById(R.id.util_Option2).setVisibility(View.INVISIBLE);
         findViewById(R.id.shape_Option2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.size_Option2_Container).setVisibility(View.INVISIBLE);
 
         findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
         findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
     }
 
-    private void checkLocation(){}
+
+    private void setAlias(){
+        ImageButton ib = (ImageButton) findViewById(R.id.aliasing_imageButton);
+        if(!aliasing){
+            aliasing = true;
+            ib.setImageResource(R.drawable.aa);
+        } else {
+            aliasing = false;
+            ib.setImageResource(R.drawable.noaa);
+        }
+    }
 
 }
