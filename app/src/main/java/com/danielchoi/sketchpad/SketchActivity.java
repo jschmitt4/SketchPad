@@ -24,8 +24,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ResourceCursorTreeAdapter;
+import static android.R.attr.antialias;
 import android.widget.Toast;
 import java.util.UUID;
+import static android.R.attr.onClick;
+
 
 public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
@@ -120,6 +124,15 @@ implements View.OnClickListener{
                 confirmClear();
                 if(lastView!= null) updateSelectView(lastView);
                 else updateSelectView(findViewById(R.id.util_Option1));
+                else updateSelectView(findViewById(R.id.pencil_imageButton));
+            } else if (view.getId() == R.id.aliasing_imageButton) {
+                if(!aliasing){
+                    aliasing = true;
+                    Toast.makeText(this, "Aliasing True", Toast.LENGTH_SHORT).show();
+                } else {
+                    aliasing = false;
+                    Toast.makeText(this, "Aliasing False", Toast.LENGTH_SHORT).show();
+                }
 
             } else if(view.getId() == R.id.save_imageButton){
                 hideAllExpansion();
@@ -127,7 +140,6 @@ implements View.OnClickListener{
                 if(lastView!= null) updateSelectView(lastView);
                 else updateSelectView(findViewById(R.id.util_Option1));
             }
-
             showPallet();
 
         }else {
@@ -135,7 +147,6 @@ implements View.OnClickListener{
             else menuOpen = true;
             displayButtons();
         }
-
     }
 
     /**
@@ -333,6 +344,26 @@ implements View.OnClickListener{
             Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
         }
         drawView.destroyDrawingCache();
+    }
+
+    /**
+     * This is called on request to check for a permission.
+     * If granted calls saveImage()
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {saveImage();}
+                return;
+            }
+        }
     }
 
     /**

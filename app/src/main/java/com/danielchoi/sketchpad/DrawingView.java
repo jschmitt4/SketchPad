@@ -35,7 +35,7 @@ public class DrawingView extends View {
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
-    public float defaultStrokeWidth = 50;
+    public float defaultStrokeWidth = 2;
     public float strokeWidth;
     public int screenHeight;
     public Rect rect;
@@ -48,6 +48,9 @@ public class DrawingView extends View {
     private int yStart;
     private int xFinish;
     private int yFinish;
+
+    // On/Off for Anti Aliasing
+    SketchActivity sketchActivity = new SketchActivity();
 
     /**
      * Constructors to set up the widget
@@ -72,7 +75,6 @@ public class DrawingView extends View {
      * This is the setup for path tool of the app
      * IE: Pencil, Marker, & Brush
      */
-
     private void setupDrawing() {
         //get drawing area setup for interaction
 
@@ -80,7 +82,7 @@ public class DrawingView extends View {
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
-        drawPaint.setAntiAlias(true);
+        drawPaint.setAntiAlias(sketchActivity.aliasing);
         // Sets up a temporary brush size
         dm = getResources().getDisplayMetrics();
         float strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,defaultStrokeWidth,dm);
@@ -101,7 +103,6 @@ public class DrawingView extends View {
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
         screenHeight = h;
-
     }
 
     @Override
