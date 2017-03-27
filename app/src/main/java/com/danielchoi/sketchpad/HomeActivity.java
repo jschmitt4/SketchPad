@@ -27,7 +27,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.startImageButton).setOnClickListener(this);
         findViewById(R.id.aboutButton).setOnClickListener(this);
-        findViewById(R.id.loadButton).setOnClickListener(this);
 
         ImageButton startIb = (ImageButton) findViewById(R.id.startImageButton);
         Animation animationShake = AnimationUtils.loadAnimation(this, R.anim.shake);
