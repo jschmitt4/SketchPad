@@ -87,10 +87,12 @@ implements View.OnClickListener{
                 drawView.setCurrentMode("LINE");
                 erase = false;
                 lastView = view;
+                Toast.makeText(this, "Line Button", Toast.LENGTH_SHORT).show();
             } else if (view.getId() == R.id.rect_imageButton) {
                 drawView.setCurrentMode("RECT");
                 erase = false;
                 lastView = view;
+                Toast.makeText(this, "Rectangle Button", Toast.LENGTH_SHORT).show();
             } else if (view.getId() == R.id.eraser_imageButton) {
                 drawView.setCurrentMode("DRAW");
                 erase = true;
