@@ -42,15 +42,13 @@ public class DrawingView extends View {
     private DisplayMetrics dm;
     static enum Mode {PENCIL, MARKER, LINE, RECT};
     private Mode currentMode = Mode.PENCIL;
+    boolean alias = true;
 
     //line/rectangle start and finish coordinates.
     private int xStart;
     private int yStart;
     private int xFinish;
     private int yFinish;
-
-    // On/Off for Anti Aliasing
-    SketchActivity sketchActivity = new SketchActivity();
 
     /**
      * Constructors to set up the widget
@@ -82,7 +80,7 @@ public class DrawingView extends View {
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
-        drawPaint.setAntiAlias(sketchActivity.aliasing);
+        drawPaint.setAntiAlias(getAlias());
         // Sets up a temporary brush size
         dm = getResources().getDisplayMetrics();
         float strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,defaultStrokeWidth,dm);
@@ -225,5 +223,25 @@ public class DrawingView extends View {
         }
     }
 
+    /**
+     * setAlias is a setter method for SketchActivity to toggle Anti Aliasing on/off based on
+     * the Anti Aliasing button being clicked in SketchActivity. setAlias also calls "setAntiAlias"
+     * to update the aliasing to be used.
+     * @param aa
+     */
+    public void setAlias(boolean aa){
+        alias = aa;
+        drawPaint.setAntiAlias(alias);
+    }
+
+    /**
+     * getAlias is a getter method that simply returns the boolean stored in the alias variable.
+     * This is most helpful in SketchActivity where logic is deciding whether anti aliasing should be
+     * used or not.
+     * @return alias
+     */
+    public Boolean getAlias(){
+        return alias;
+    }
 
 }
