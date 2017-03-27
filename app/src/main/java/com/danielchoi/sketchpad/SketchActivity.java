@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ResourceCursorTreeAdapter;
@@ -43,6 +45,8 @@ implements View.OnClickListener{
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE = 999;
     Vibrator vb;
     boolean erase = false;
+    ImageButton selectView;
+    Animation selectAnimationShake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,9 @@ implements View.OnClickListener{
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout
         currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
         currPaint.setImageResource(R.drawable.paint_pressed);
-
+        selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
+        selectView = (ImageButton) findViewById(R.id.pencil_imageButton);
+        selectView.startAnimation(selectAnimationShake);
         displayButtons();
         setOnClicks();
     }
@@ -63,6 +69,7 @@ implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         vb.vibrate(10);
+
 
         if(view.getId() != R.id.menuButton){
             updateSelectView(view);
@@ -129,9 +136,11 @@ implements View.OnClickListener{
 
         for(int id : display){
             if(v.getId() == id){
-                v.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                selectView = (ImageButton) findViewById(id);
+                selectView.startAnimation(selectAnimationShake);
             }else{
-                findViewById(id).setBackgroundColor(Color.parseColor("#009999"));
+                selectView = (ImageButton) findViewById(id);
+                selectView.clearAnimation();
             }
         }
     }
@@ -192,7 +201,6 @@ implements View.OnClickListener{
     }
 
     private void confirmPrompt(){}
-
     /**
      * This is the alert prompt when the user wants to save the file
      */
