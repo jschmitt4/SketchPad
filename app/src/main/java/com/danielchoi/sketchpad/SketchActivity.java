@@ -1,20 +1,33 @@
 package com.danielchoi.sketchpad;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Vibrator;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.ResourceCursorTreeAdapter;
-
 import static android.R.attr.antialias;
+import android.widget.Toast;
+import java.net.URI;
+import java.util.UUID;
 import static android.R.attr.onClick;
 
 public class SketchActivity extends AppCompatActivity
@@ -39,9 +52,12 @@ implements View.OnClickListener{
     private ImageButton currPaint;
     private View lastView;
     private static int numOfOptions = 9;
+    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE = 999;
     Vibrator vb;
     boolean erase = false;
     boolean aliasing = true;
+    ImageButton selectView;
+    Animation selectAnimationShake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +69,9 @@ implements View.OnClickListener{
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout
         currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
         currPaint.setImageResource(R.drawable.paint_pressed);
-
+        selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
+        selectView = (ImageButton) findViewById(R.id.pencil_imageButton);
+        selectView.startAnimation(selectAnimationShake);
         displayButtons();
         setOnClicks();
     }
@@ -62,6 +80,7 @@ implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         vb.vibrate(10);
+
 
         if(view.getId() != R.id.menuButton){
             updateSelectView(view);
@@ -72,12 +91,12 @@ implements View.OnClickListener{
                 erase = false;
                 lastView = view;
             } else if (view.getId() == R.id.marker_imageButton) {
-                drawView.changeStrokeWidth(8);
+                drawView.changeStrokeWidth(10);
                 drawView.setCurrentMode("DRAW");
                 erase = false;
                 lastView = view;
             } else if (view.getId() == R.id.brush_imageButton) {
-                drawView.changeStrokeWidth(20);
+                drawView.changeStrokeWidth(25);
                 drawView.setCurrentMode("DRAW");
                 erase = false;
                 lastView = view;
@@ -108,6 +127,11 @@ implements View.OnClickListener{
                     aliasing = false;
                     Toast.makeText(this, "Aliasing False", Toast.LENGTH_SHORT).show();
                 }
+
+            } else if(view.getId() == R.id.save_imageButton){
+                savePrompt();
+                if(lastView!= null) updateSelectView(lastView);
+                else updateSelectView(findViewById(R.id.pencil_imageButton));
             }
             showPallet();
         }else {
@@ -126,9 +150,11 @@ implements View.OnClickListener{
 
         for(int id : display){
             if(v.getId() == id){
-                v.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                selectView = (ImageButton) findViewById(id);
+                selectView.startAnimation(selectAnimationShake);
             }else{
-                findViewById(id).setBackgroundColor(Color.parseColor("#009999"));
+                selectView = (ImageButton) findViewById(id);
+                selectView.clearAnimation();
             }
         }
     }
@@ -179,6 +205,7 @@ implements View.OnClickListener{
         else findViewById(R.id.swatches).setVisibility(View.VISIBLE);
 
     }
+
     private void setOnClicks(){
         findViewById(R.id.menuButton).setOnClickListener(this);
         for (int id : display) {
@@ -188,6 +215,92 @@ implements View.OnClickListener{
     }
 
     private void confirmPrompt(){}
+    /**
+     * This is the alert prompt when the user wants to save the file
+     */
+    private void savePrompt(){
+        AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+        saveDialog.setTitle("Save Sketch");
+        saveDialog.setMessage("Save sketch to your device?");
+        saveDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                drawView.setDrawingCacheEnabled(true);
+                checkSavePermission();
+
+            }
+        });
+        saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        saveDialog.show();
+    }
+
+    /**
+     * Android 6.0 and up
+     * They require a check of permission during run time for "Dangerous Permissions"
+     * This calls the check for permission. If granted calls the saveImage()
+     */
+    public void checkSavePermission(){
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE);
+        }else if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            saveImage();
+        }else{
+            Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * This method saves the file.
+     *
+     */
+    private void saveImage(){
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis()); // DATE HERE
+        ContentResolver cr = this.getContentResolver();
+
+
+        String imgSaved = MediaStore.Images.Media.insertImage(
+                getContentResolver(), drawView.getDrawingCache(),
+                UUID.randomUUID().toString()+".png", "sketch");
+        Log.i("ID?",imgSaved);
+
+        if(imgSaved != null){
+            Toast.makeText(getApplicationContext(), "Sketch Saved", Toast.LENGTH_SHORT).show();
+        } else{
+            Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
+        }
+        drawView.destroyDrawingCache();
+    }
+
+    /**
+     * This is called on request to check for a permission.
+     * If granted calls saveImage()
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {saveImage();}
+                return;
+            }
+        }
+    }
 
     /**
      * Gets the screen size from the canvas.

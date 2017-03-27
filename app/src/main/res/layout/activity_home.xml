@@ -13,28 +13,6 @@
     android:background="@drawable/paper">
 
     <ImageButton
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:src="@drawable/about"
-        android:scaleType="centerInside"
-        android:background="#00000000"
-        android:id="@+id/aboutButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-         />
-
-    <ImageButton
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:src="@drawable/loadsketch"
-        android:scaleType="centerInside"
-        android:background="#00000000"
-        android:id="@+id/loadButton"
-        android:layout_above="@id/aboutButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp" />
-
-    <ImageButton
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:src="@drawable/sketch"
@@ -44,4 +22,25 @@
         android:layout_marginTop="173dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:src="@drawable/loadsketch"
+        android:scaleType="centerInside"
+        android:background="#00000000"
+        android:id="@+id/loadButton"
+        android:layout_above="@+id/aboutButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="17dp" />
+
+    <ImageButton
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:scaleType="centerInside"
+        android:background="@drawable/about"
+        android:id="@+id/aboutButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp" />
 </RelativeLayout>

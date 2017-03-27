@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.graphics.Bitmap;
@@ -25,11 +26,11 @@ public class DrawingView extends View {
      */
     //drawing path
     private Path drawPath;
-    private ArrayList<Path> drawPaths = new ArrayList<Path>();
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint, paintLine, rectPaint;
     //initial color
     private int paintColor = 0xFF000000;
+    private int white = Color.parseColor("#FFFFFF");
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
@@ -104,7 +105,7 @@ public class DrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint); //This draws the path from the drawPaint's setup
+        canvas.drawPath(drawPath, drawPaint);
     }
 
     @Override
@@ -179,13 +180,13 @@ public class DrawingView extends View {
 
     public void eraser(){
         strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,dm);
-        drawPaint.setColor(Color.parseColor("#FFFFFF"));
+        drawPaint.setColor(white);
         drawPaint.setStrokeWidth(strokeWidth);
         drawPaint.setStrokeCap(Paint.Cap.SQUARE);
     }
 
     public void newSheet(){
-        drawCanvas.drawColor(Color.parseColor("#FFFFFF"));
+        drawCanvas.drawColor(white);
         invalidate();
     }
 
@@ -209,5 +210,6 @@ public class DrawingView extends View {
                 break;
         }
     }
+
 
 }
