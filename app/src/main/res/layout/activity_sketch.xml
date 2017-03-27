@@ -232,7 +232,7 @@
             app:srcCompat="@drawable/pencil"
             android:id="@+id/pencil_imageButton"
             android:scaleType="fitXY"
-            android:background="#FFFFFF"
+            android:background="#00000000"
             android:contentDescription="pencil"/>
 
         <ImageButton
