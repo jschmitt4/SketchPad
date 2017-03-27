@@ -15,5 +15,6 @@
     <string name="erase">Erase</string>
     <string name="save">Save</string>
     <string name="paint">Paint</string>
+    <string name="aliasing">Aliasing</string>
     <string name="swatches">PaintSwatches</string>
 </resources>

@@ -13,13 +13,26 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ResourceCursorTreeAdapter;
+
+import static android.R.attr.antialias;
 import static android.R.attr.onClick;
 
 public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
 
     //Array of all the buttons
-    public int display[] = {R.id.pencil_imageButton,  R.id.rect_imageButton, R.id.new_imageButton, R.id.open_imageButton, R.id.eraser_imageButton, R.id.save_imageButton, R.id.brush_imageButton, R.id.marker_imageButton, R.id.line_imageButton};
+    public int display[] = {
+        R.id.pencil_imageButton,
+        R.id.rect_imageButton,
+        R.id.new_imageButton,
+        R.id.open_imageButton,
+        R.id.eraser_imageButton,
+        R.id.save_imageButton,
+        R.id.brush_imageButton,
+        R.id.marker_imageButton,
+        R.id.line_imageButton,
+        R.id.aliasing_imageButton,
+    };
     private boolean menuOpen = false;
     // Used for the Drawing and color paint
     private DrawingView drawView;
@@ -28,6 +41,7 @@ implements View.OnClickListener{
     private static int numOfOptions = 9;
     Vibrator vb;
     boolean erase = false;
+    boolean aliasing = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +56,6 @@ implements View.OnClickListener{
 
         displayButtons();
         setOnClicks();
-
     }
 
 
@@ -68,7 +81,6 @@ implements View.OnClickListener{
                 drawView.setCurrentMode("DRAW");
                 erase = false;
                 lastView = view;
-
             } else if (view.getId() == R.id.line_imageButton) {
                 drawView.setCurrentMode("LINE");
                 erase = false;
@@ -78,7 +90,6 @@ implements View.OnClickListener{
                 drawView.setCurrentMode("RECT");
                 erase = false;
                 lastView = view;
-                Toast.makeText(this, "Rectangle Button", Toast.LENGTH_SHORT).show();
             } else if (view.getId() == R.id.eraser_imageButton) {
                 drawView.setCurrentMode("DRAW");
                 erase = true;
@@ -89,15 +100,21 @@ implements View.OnClickListener{
                 erase = false;
                 if(lastView!= null) updateSelectView(lastView);
                 else updateSelectView(findViewById(R.id.pencil_imageButton));
+            } else if (view.getId() == R.id.aliasing_imageButton) {
+                if(!aliasing){
+                    aliasing = true;
+                    Toast.makeText(this, "Aliasing True", Toast.LENGTH_SHORT).show();
+                } else {
+                    aliasing = false;
+                    Toast.makeText(this, "Aliasing False", Toast.LENGTH_SHORT).show();
+                }
             }
-
             showPallet();
         }else {
             if (menuOpen) menuOpen = false;
             else menuOpen = true;
             displayButtons();
         }
-
     }
 
     /**

@@ -278,7 +278,17 @@
             android:id="@+id/eraser_imageButton"
             android:scaleType="fitXY"
             android:background="#00000000"
-            android:contentDescription="@string/paint"/>
+            android:contentDescription="@string/erase"/>
+
+        <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="4dp"
+                app:srcCompat="@drawable/eraser"
+                android:id="@+id/aliasing_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/aliasing"/>
 
     </LinearLayout>
 

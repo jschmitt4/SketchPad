@@ -47,6 +47,9 @@ public class DrawingView extends View {
     private int xFinish;
     private int yFinish;
 
+    // On/Off for Anti Aliasing
+    SketchActivity sketchActivity = new SketchActivity();
+
     /**
      * Constructors to set up the widget
      * @param context
@@ -70,13 +73,12 @@ public class DrawingView extends View {
      * This is the setup for path tool of the app
      * IE: Pencil, Marker, & Brush
      */
-
     private void setupDrawing() {
         //get drawing area setup for interaction
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
-        drawPaint.setAntiAlias(true);
+        drawPaint.setAntiAlias(sketchActivity.aliasing);
         // Sets up a temporary brush size
         dm = getResources().getDisplayMetrics();
         float strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,defaultStrokeWidth,dm);
@@ -97,7 +99,6 @@ public class DrawingView extends View {
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
         screenHeight = h;
-
     }
 
     @Override
@@ -191,6 +192,7 @@ public class DrawingView extends View {
     public int getScreenHeight(){
         return screenHeight;
     }
+
     public void setCurrentMode(String m){
         switch (m) {
             case "DRAW":
