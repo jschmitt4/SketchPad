@@ -38,9 +38,10 @@ public class DrawingView extends View {
     public float defaultStrokeWidth = 2;
     public float strokeWidth;
     public int screenHeight;
+    public Rect rect;
     private DisplayMetrics dm;
-    static enum Mode {DRAW, LINE, RECT};
-    private Mode currentMode = Mode.DRAW;
+    static enum Mode {PENCIL, MARKER, LINE, RECT};
+    private Mode currentMode = Mode.PENCIL;
 
     //line/rectangle start and finish coordinates.
     private int xStart;
@@ -76,6 +77,8 @@ public class DrawingView extends View {
      */
     private void setupDrawing() {
         //get drawing area setup for interaction
+
+        rect = new Rect();
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -114,7 +117,7 @@ public class DrawingView extends View {
         float touchX = event.getX();
         float touchY = event.getY();
 
-        if(currentMode == Mode.DRAW) {
+        if(currentMode == Mode.PENCIL || currentMode == Mode.MARKER) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     drawPath.moveTo(touchX, touchY);
@@ -152,10 +155,8 @@ public class DrawingView extends View {
                 case MotionEvent.ACTION_UP:
                     xFinish = (int) event.getX();
                     yFinish = (int) event.getY();
-                    Rect rect = new Rect();
                     rect.set(xStart, yStart, xFinish, yFinish);
                     drawCanvas.drawRect(rect, drawPaint);
-                    drawPath.reset();
                     break;
                 default:
                     return false;
@@ -197,16 +198,29 @@ public class DrawingView extends View {
     public void setCurrentMode(String m){
         switch (m) {
             case "DRAW":
-                currentMode = Mode.DRAW;
+                currentMode = Mode.PENCIL;
+                drawPaint.setStrokeCap(Paint.Cap.ROUND);
+                drawPaint.setStyle(Paint.Style.STROKE);
+                break;
+            case "MARKER":
+                currentMode = Mode.MARKER;
+                drawPaint.setStrokeCap(Paint.Cap.SQUARE);
+                drawPaint.setStyle(Paint.Style.STROKE);
                 break;
             case "LINE":
                 currentMode = Mode.LINE;
+                drawPaint.setStrokeCap(Paint.Cap.ROUND);
+                drawPaint.setStyle(Paint.Style.STROKE);
                 break;
             case "RECT":
                 currentMode = Mode.RECT;
+                drawPaint.setStrokeCap(Paint.Cap.SQUARE);
+                drawPaint.setStyle(Paint.Style.FILL);
                 break;
             default:
-                currentMode = Mode.DRAW;
+                currentMode = Mode.PENCIL;
+                drawPaint.setStrokeCap(Paint.Cap.ROUND);
+                drawPaint.setStyle(Paint.Style.STROKE);
                 break;
         }
     }

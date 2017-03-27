@@ -189,108 +189,199 @@
         </LinearLayout>
     </LinearLayout>
 
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="400dp"
+        android:id="@+id/backdrop"
+        android:layout_alignTop="@+id/drawingView"
+        android:layout_alignEnd="@+id/drawingView"
+        android:background="#009999"
+        />
+
+
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/optionsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#009999"
         android:layout_alignTop="@+id/drawingView"
-        android:layout_alignEnd="@+id/drawingView">
+        android:layout_alignEnd="@+id/drawingView"
+        >
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/newfile"
-            android:id="@+id/new_imageButton"
-            android:scaleType="fitXY"
-            android:padding="2dp"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="#00000000"
-            android:contentDescription="@string/paint"/>
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/newfile"
+                android:id="@+id/new_imageButton"
+                android:scaleType="fitXY"
+                android:padding="2dp"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"
+                />
+        </LinearLayout>
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/open"
-            android:id="@+id/open_imageButton"
-            android:scaleType="fitXY"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/save"
+                android:id="@+id/save_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/save"/>
+        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/utility_LL"
+                android:orientation="horizontal"
+                android:layoutDirection="rtl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/pencil"
+                    android:id="@+id/util_Option1"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="pencil"
+                    />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/marker"
+                    android:id="@+id/util_Option2"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="marker"
+                    />
+
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/shapes_LL"
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="#00000000"
-            android:contentDescription="@string/paint"/>
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/line"
+                android:id="@+id/shape_Option1"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="line"/>
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/save"
-            android:id="@+id/save_imageButton"
-            android:scaleType="fitXY"
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/rectangle"
+                android:id="@+id/shape_Option2"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="rectangle"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="#00000000"
-            android:contentDescription="@string/save"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/pencil"
-            android:id="@+id/pencil_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="pencil"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/marker"
-            android:id="@+id/marker_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="marker"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/brush"
-            android:id="@+id/brush_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/brush"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/line"
-            android:id="@+id/line_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="line"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/rectangle"
-            android:id="@+id/rect_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="rectangle"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="4dp"
-            app:srcCompat="@drawable/eraser"
-            android:id="@+id/eraser_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/erase"/>
-
-        <ImageButton
+            >
+            <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:padding="4dp"
                 app:srcCompat="@drawable/eraser"
+                android:id="@+id/eraser_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:id="@+id/size_LL"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/size_Option1_Container">
+
+                <ImageButton
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/dot"
+                    android:id="@+id/size_Option1"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="@string/paint"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/size_Option2_Container">
+
+                <ImageButton
+
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/dot"
+                    android:id="@+id/size_Option2"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="@string/paint"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="4dp"
+                app:srcCompat="@drawable/aa"
                 android:id="@+id/aliasing_imageButton"
                 android:scaleType="fitXY"
                 android:background="#00000000"
-                android:contentDescription="@string/aliasing"/>
+                android:contentDescription="@string/paint"/>
+        </LinearLayout>
 
     </LinearLayout>
+
 
 </RelativeLayout>

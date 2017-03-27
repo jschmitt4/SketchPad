@@ -7,54 +7,59 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.ResourceCursorTreeAdapter;
 import static android.R.attr.antialias;
 import android.widget.Toast;
-import java.net.URI;
 import java.util.UUID;
 import static android.R.attr.onClick;
+
 
 public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
 
     //Array of all the buttons
     public int display[] = {
-        R.id.pencil_imageButton,
-        R.id.rect_imageButton,
-        R.id.new_imageButton,
-        R.id.open_imageButton,
-        R.id.eraser_imageButton,
-        R.id.save_imageButton,
-        R.id.brush_imageButton,
-        R.id.marker_imageButton,
-        R.id.line_imageButton,
-        R.id.aliasing_imageButton,
-    };
+            R.id.util_Option1,
+            R.id.util_Option2,
+            R.id.shape_Option1,
+            R.id.shape_Option2,
+            R.id.shape_Option1,
+            R.id.size_Option1,
+            R.id.size_Option2,
+            R.id.new_imageButton,
+            R.id.eraser_imageButton,
+            R.id.save_imageButton,
+            R.id.aliasing_imageButton};
     private boolean menuOpen = false;
     // Used for the Drawing and color paint
     private DrawingView drawView;
     private ImageButton currPaint;
     private View lastView;
-    private static int numOfOptions = 9;
+    private int buttonSize;
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE = 999;
     Vibrator vb;
+    private String lastColor = "#FF000000";
     boolean erase = false;
+    boolean longClick = false;
+    boolean utilSwitched = false;
+    boolean shapeSwitched = false;
     boolean aliasing = true;
     ImageButton selectView;
     Animation selectAnimationShake;
@@ -70,70 +75,93 @@ implements View.OnClickListener{
         currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
         currPaint.setImageResource(R.drawable.paint_pressed);
         selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
-        selectView = (ImageButton) findViewById(R.id.pencil_imageButton);
+        selectView = (ImageButton) findViewById(R.id.util_Option1);
         selectView.startAnimation(selectAnimationShake);
+        hideAllExpansion();
         displayButtons();
         setOnClicks();
-    }
 
+    }
 
     @Override
     public void onClick(View view) {
         vb.vibrate(10);
-
+        erase = false;
 
         if(view.getId() != R.id.menuButton){
             updateSelectView(view);
 
-            if (view.getId() == R.id.pencil_imageButton) {
-                drawView.changeStrokeWidth(1);
-                drawView.setCurrentMode("DRAW");
-                erase = false;
-                lastView = view;
-            } else if (view.getId() == R.id.marker_imageButton) {
-                drawView.changeStrokeWidth(10);
-                drawView.setCurrentMode("DRAW");
-                erase = false;
-                lastView = view;
-            } else if (view.getId() == R.id.brush_imageButton) {
-                drawView.changeStrokeWidth(25);
-                drawView.setCurrentMode("DRAW");
-                erase = false;
-                lastView = view;
-            } else if (view.getId() == R.id.line_imageButton) {
-                drawView.setCurrentMode("LINE");
-                erase = false;
-                lastView = view;
-                Toast.makeText(this, "Line Button", Toast.LENGTH_SHORT).show();
-            } else if (view.getId() == R.id.rect_imageButton) {
-                drawView.setCurrentMode("RECT");
-                erase = false;
-                lastView = view;
-            } else if (view.getId() == R.id.eraser_imageButton) {
+            if (view.getId() == R.id.util_Option1) {
+                if(!longClick){
+                    if(!utilSwitched)setPencil();
+                    else setMarker();
+
+                    lastView = view;
+                    hideAllExpansion();
+                }longClick = false;
+
+
+            } else if (view.getId() == R.id.util_Option2) {
+                if(utilSwitched)setPencil();
+                else setMarker();
+
+                lastView = findViewById(R.id.util_Option1);
+                swap(view.getId());
+                hideAllExpansion();
+
+            }  else if (view.getId() == R.id.shape_Option1) {
+                if(!longClick) {
+                    if(!shapeSwitched)setLine();
+                    else setRect();
+
+                    lastView = view;
+                    hideAllExpansion();
+                }longClick = false;
+
+            } else if (view.getId() == R.id.shape_Option2) {
+                if(shapeSwitched)setLine();
+                else setRect();
+                lastView = findViewById(R.id.shape_Option1);
+                swap(view.getId());
+                hideAllExpansion();
+
+            }else if (view.getId() == R.id.size_Option1) {
+                if(!longClick) {
+                    if(lastView!= null) updateSelectView(lastView);
+                    else updateSelectView(findViewById(R.id.util_Option1));
+                    hideAllExpansion();
+                }longClick = false;
+
+            } else if (view.getId() == R.id.size_Option2) {
+
+                hideAllExpansion();
+
+            }else if (view.getId() == R.id.eraser_imageButton) {
                 drawView.setCurrentMode("DRAW");
                 erase = true;
                 drawView.eraser(); //Selects eraser
+                hideAllExpansion();
+
             } else if (view.getId() == R.id.new_imageButton) {
-                confirmPrompt();
-                drawView.newSheet();
-                erase = false;
+                hideAllExpansion();
+                confirmClear();
                 if(lastView!= null) updateSelectView(lastView);
-                else updateSelectView(findViewById(R.id.pencil_imageButton));
+                else updateSelectView(findViewById(R.id.util_Option1));
+
             } else if (view.getId() == R.id.aliasing_imageButton) {
-                if(!aliasing){
-                    aliasing = true;
-                    Toast.makeText(this, "Aliasing True", Toast.LENGTH_SHORT).show();
-                } else {
-                    aliasing = false;
-                    Toast.makeText(this, "Aliasing False", Toast.LENGTH_SHORT).show();
-                }
+                setAlias();
+                hideAllExpansion();
+                if(lastView!= null) updateSelectView(lastView);
+                else updateSelectView(findViewById(R.id.util_Option1));
 
             } else if(view.getId() == R.id.save_imageButton){
+                hideAllExpansion();
                 savePrompt();
                 if(lastView!= null) updateSelectView(lastView);
-                else updateSelectView(findViewById(R.id.pencil_imageButton));
+                else updateSelectView(findViewById(R.id.util_Option1));
             }
             showPallet();
+
         }else {
             if (menuOpen) menuOpen = false;
             else menuOpen = true;
@@ -152,7 +180,7 @@ implements View.OnClickListener{
             if(v.getId() == id){
                 selectView = (ImageButton) findViewById(id);
                 selectView.startAnimation(selectAnimationShake);
-            }else{
+            }else {
                 selectView = (ImageButton) findViewById(id);
                 selectView.clearAnimation();
             }
@@ -171,8 +199,8 @@ implements View.OnClickListener{
         if(view!=currPaint && !erase){
             // Update color to user selection
             ImageButton imgView = (ImageButton)view;
-            String color = view.getTag().toString();
-            drawView.setColor(color);
+            lastColor = view.getTag().toString();
+            drawView.setColor(lastColor);
 
             // Update UI to reflect chosen paint and set previous back to normal
             imgView.setImageResource(R.drawable.paint_pressed);
@@ -189,11 +217,13 @@ implements View.OnClickListener{
         setButtonSizeByScreen();
         if(menuOpen) {
             findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
+            findViewById(R.id.backdrop).setVisibility(View.VISIBLE);
             showPallet();
 
         }else {
             findViewById(R.id.optionsLayout).setVisibility(View.INVISIBLE);
             findViewById(R.id.swatches).setVisibility(View.INVISIBLE);
+            findViewById(R.id.backdrop).setVisibility(View.INVISIBLE);
         }
     }
 
@@ -211,10 +241,56 @@ implements View.OnClickListener{
         for (int id : display) {
             findViewById(id).setOnClickListener(this);
         }
+        findViewById(R.id.util_Option1).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                longClick = true;
+                expand(view);
+                return false;
+            }
+        });
+
+        findViewById(R.id.shape_Option1).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                longClick = true;
+                expand(view);
+                return false;
+            }
+        });
+
+        findViewById(R.id.size_Option1).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                longClick = true;
+                expand(view);
+                return false;
+            }
+        });
+
 
     }
 
-    private void confirmPrompt(){}
+    private void confirmClear(){
+
+        AlertDialog.Builder clearDialog = new AlertDialog.Builder(this);
+        clearDialog.setTitle("Clear Canvas");
+        clearDialog.setMessage("Are you sure you wanna clear your canvas?");
+        clearDialog.setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                drawView.newSheet();
+
+            }
+        });
+        clearDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        clearDialog.show();
+    }
     /**
      * This is the alert prompt when the user wants to save the file
      */
@@ -260,6 +336,24 @@ implements View.OnClickListener{
     }
 
     /**
+     * This is called on request to check for a permission.
+     * If granted calls saveImage()
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {saveImage();}
+                return;
+            }
+        }
+    }
+
+    /**
      * This method saves the file.
      *
      */
@@ -290,27 +384,153 @@ implements View.OnClickListener{
      * @param grantResults
      */
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {saveImage();}
-                return;
-            }
-        }
-    }
-
     /**
      * Gets the screen size from the canvas.
      * This dynamically changes the size of the buttons so that it is correct on all screens
      */
     private void setButtonSizeByScreen(){
         float height = View.MeasureSpec.getSize(drawView.getScreenHeight());
-        int buttonSize = Math.round(height/(numOfOptions));
+        buttonSize = Math.round(height/(10));
         for(int i: display) {
-            findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+            if(i == R.id.size_Option1){
+
+                findViewById(R.id.size_Option1_Container).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+
+            }else if(i == R.id.size_Option2){
+
+                findViewById(R.id.size_Option2_Container).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+            }
+            else findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+        }
+
+        /**
+         * This sets the backdrop to be aligned with the drawingview and list options.
+         * This is done so even if I also the above layout's background it does change it.
+         */
+        TextView tv = (TextView) findViewById(R.id.backdrop);
+        tv.setLayoutParams(new RelativeLayout.LayoutParams(buttonSize, (buttonSize * 7)));
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tv.getLayoutParams();
+        params.addRule(RelativeLayout.ALIGN_END, R.id.drawingView);
+        params.addRule(RelativeLayout.ALIGN_TOP, R.id.drawingView);
+
+    }
+
+    private void setPencil(){
+        drawView.setColor(lastColor);
+        drawView.changeStrokeWidth(2);
+        drawView.setCurrentMode("PENCIL");
+
+    }
+
+    private void setMarker(){
+        drawView.setColor(lastColor);
+        drawView.changeStrokeWidth(10);
+        drawView.setCurrentMode("MARKER");
+        findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#009999"));
+    }
+
+    private void setLine(){
+        drawView.setColor(lastColor);
+        drawView.setCurrentMode("LINE");
+    }
+
+    private void setRect(){
+        drawView.setColor(lastColor);
+        drawView.setCurrentMode("RECT");
+
+    }
+
+    /**
+     * This expands the view on long Click
+     * @param v
+     */
+    private void expand(View v){
+        if(v.getId() == R.id.util_Option1){
+            findViewById(R.id.util_Option2).setVisibility(View.VISIBLE);
+            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#009999"));
+            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+
+        }else if(v.getId() == R.id.shape_Option1){
+            findViewById(R.id.shape_Option2).setVisibility(View.VISIBLE);
+            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#009999"));
+            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        }
+        else if(v.getId() == R.id.size_Option1){
+            findViewById(R.id.size_Option2_Container).setVisibility(View.VISIBLE);
+            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#009999"));
+            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        }
+    }
+
+    /**
+     * This method, swaps the images for the slide out buttons
+     * @param id
+     */
+    private void swap(int id){ //2
+
+        if(id == R.id.util_Option2) {
+            if(!utilSwitched){
+                ImageButton ib = (ImageButton) findViewById(id);
+                ib.setImageResource(R.drawable.pencil);
+                ImageButton ib2 = (ImageButton) findViewById(R.id.util_Option1);
+                ib2.setImageResource(R.drawable.marker);
+                updateSelectView(ib2);
+                utilSwitched = true;
+            }else{
+                ImageButton ib = (ImageButton) findViewById(id);
+                ib.setImageResource(R.drawable.marker);
+                ImageButton ib2 = (ImageButton) findViewById(R.id.util_Option1);
+                ib2.setImageResource(R.drawable.pencil);
+
+                utilSwitched = false;
+                updateSelectView(ib2);
+            }
+
+        }else if(id == R.id.shape_Option2){
+            if(!shapeSwitched){
+                ImageButton ib = (ImageButton) findViewById(id);
+                ib.setImageResource(R.drawable.line);
+                ImageButton ib2 = (ImageButton) findViewById(R.id.shape_Option1);
+                ib2.setImageResource(R.drawable.rectangle);
+                updateSelectView(ib2);
+                shapeSwitched = true;
+            }else{
+                ImageButton ib = (ImageButton) findViewById(id);
+                ib.setImageResource(R.drawable.rectangle);
+                ImageButton ib2 = (ImageButton) findViewById(R.id.shape_Option1);
+                ib2.setImageResource(R.drawable.line);
+
+                shapeSwitched = false;
+                updateSelectView(ib2);
+            }
+        }
+    }
+
+    /**
+     * This hides all the "exapansion" from the long presses
+     */
+    private void hideAllExpansion(){
+        findViewById(R.id.util_Option2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.shape_Option2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.size_Option2_Container).setVisibility(View.INVISIBLE);
+
+        findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+    }
+
+
+    private void setAlias(){
+        ImageButton ib = (ImageButton) findViewById(R.id.aliasing_imageButton);
+        if(!aliasing){
+            aliasing = true;
+            ib.setImageResource(R.drawable.aa);
+        } else {
+            aliasing = false;
+            ib.setImageResource(R.drawable.noaa);
         }
     }
 
