@@ -133,11 +133,9 @@ implements View.OnClickListener{
                 if(!drawView.getAlias()){
                     drawView.setAlias(true);
                     ib.setImageResource(R.drawable.aa);
-                    Toast.makeText(this, "Alias " + Boolean.toString(drawView.getAlias()), Toast.LENGTH_SHORT).show();
                 } else {
                     drawView.setAlias(false);
                     ib.setImageResource(R.drawable.noaa);
-                    Toast.makeText(this, "Alias " + Boolean.toString(drawView.getAlias()), Toast.LENGTH_SHORT).show();
                 }
                 hideAllExpansion();
                 if(lastView!= null) updateSelectView(lastView);
