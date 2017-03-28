@@ -54,7 +54,6 @@ implements View.OnClickListener{
     boolean longClick = false;
     boolean utilSwitched = false;
     boolean shapeSwitched = false;
-    boolean aliasing = true;
     ImageButton selectView;
     Animation selectAnimationShake;
 
@@ -130,11 +129,19 @@ implements View.OnClickListener{
                 else updateSelectView(findViewById(R.id.util_Option1));
 
             } else if (view.getId() == R.id.aliasing_imageButton) {
-                setAlias();
+                ImageButton ib = (ImageButton) findViewById(R.id.aliasing_imageButton);
+                if(!drawView.getAlias()){
+                    drawView.setAlias(true);
+                    ib.setImageResource(R.drawable.aa);
+                    Toast.makeText(this, "Alias " + Boolean.toString(drawView.getAlias()), Toast.LENGTH_SHORT).show();
+                } else {
+                    drawView.setAlias(false);
+                    ib.setImageResource(R.drawable.noaa);
+                    Toast.makeText(this, "Alias " + Boolean.toString(drawView.getAlias()), Toast.LENGTH_SHORT).show();
+                }
                 hideAllExpansion();
                 if(lastView!= null) updateSelectView(lastView);
                 else updateSelectView(findViewById(R.id.util_Option1));
-
             } else if(view.getId() == R.id.save_imageButton){
                 hideAllExpansion();
                 savePrompt();
@@ -509,18 +516,6 @@ implements View.OnClickListener{
         findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
     }
 
-
-    private void setAlias(){
-        ImageButton ib = (ImageButton) findViewById(R.id.aliasing_imageButton);
-        if(!aliasing){
-            aliasing = true;
-            ib.setImageResource(R.drawable.aa);
-        } else {
-            aliasing = false;
-            ib.setImageResource(R.drawable.noaa);
-        }
-    }
-
     @Override
     public void onBackPressed() {
 
@@ -543,5 +538,4 @@ implements View.OnClickListener{
         });
         backDialog.show();
     }
-
 }
