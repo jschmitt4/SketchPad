@@ -40,7 +40,7 @@ public class DrawingView extends View {
     public int screenHeight;
     public Rect rect;
     private DisplayMetrics dm;
-    static enum Mode {PENCIL, MARKER, LINE, RECT};
+    public enum Mode {PENCIL, MARKER, LINE, RECT};
     private Mode currentMode = Mode.PENCIL;
 
     //line/rectangle start and finish coordinates.
