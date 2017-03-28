@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Vibrator;
@@ -16,19 +17,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ResourceCursorTreeAdapter;
-import static android.R.attr.antialias;
 import android.widget.Toast;
 import java.util.UUID;
-import static android.R.attr.onClick;
 
 
 public class SketchActivity extends AppCompatActivity
@@ -36,17 +32,14 @@ implements View.OnClickListener{
 
     //Array of all the buttons
     public int display[] = {
-            R.id.util_Option1,
-            R.id.util_Option2,
-            R.id.shape_Option1,
-            R.id.shape_Option2,
-            R.id.shape_Option1,
-            R.id.size_Option1,
-            R.id.size_Option2,
+            R.id.util_Option1,  R.id.util_Option2,
+            R.id.shape_Option1, R.id.shape_Option2,
+            R.id.size_Option1,  R.id.size_Option2,
             R.id.new_imageButton,
             R.id.eraser_imageButton,
             R.id.save_imageButton,
             R.id.aliasing_imageButton};
+
     private boolean menuOpen = false;
     // Used for the Drawing and color paint
     private DrawingView drawView;
@@ -54,8 +47,9 @@ implements View.OnClickListener{
     private View lastView;
     private int buttonSize;
     private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE = 999;
+    private static final String TUTORIAL = "TUTORIAL_SHARED_PREFERENCE";
     Vibrator vb;
-    private String lastColor = "#FF000000";
+    private String lastColor = "#FF000000"; //Default
     boolean erase = false;
     boolean longClick = false;
     boolean utilSwitched = false;
@@ -68,17 +62,7 @@ implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sketch);
         vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        drawView = (DrawingView)findViewById(R.id.drawingView);
-        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout
-        currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
-        currPaint.setImageResource(R.drawable.paint_pressed);
-        selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
-        selectView = (ImageButton) findViewById(R.id.util_Option1);
-        selectView.startAnimation(selectAnimationShake);
-        hideAllExpansion();
-        displayButtons();
-        setOnClicks();
+        defaultSetup();
 
     }
 
@@ -94,20 +78,17 @@ implements View.OnClickListener{
                 if(!longClick){
                     if(!utilSwitched)setPencil();
                     else setMarker();
+                    hideAllExpansion();
 
                     lastView = view;
-                    hideAllExpansion();
                 }longClick = false;
-
-
             } else if (view.getId() == R.id.util_Option2) {
                 if(utilSwitched)setPencil();
                 else setMarker();
+                hideAllExpansion();
 
                 lastView = findViewById(R.id.util_Option1);
                 swap(view.getId());
-                hideAllExpansion();
-
             }  else if (view.getId() == R.id.shape_Option1) {
                 if(!longClick) {
                     if(!shapeSwitched)setLine();
@@ -174,6 +155,19 @@ implements View.OnClickListener{
         }
     }
 
+    private void defaultSetup(){
+
+        drawView = (DrawingView)findViewById(R.id.drawingView);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout
+        currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
+        currPaint.setImageResource(R.drawable.paint_pressed);
+        selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
+        selectView = (ImageButton) findViewById(R.id.util_Option1);
+        updateSelectView(selectView);
+        hideAllExpansion();
+        displayButtons();
+        setOnClicks();
+    }
     /**
      * This takes the view from on click to show which option is clicked.
      * Highlights the button with white
@@ -381,13 +375,6 @@ implements View.OnClickListener{
         drawView.destroyDrawingCache();
     }
 
-    /**
-     * This is called on request to check for a permission.
-     * If granted calls saveImage()
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
 
     /**
      * Gets the screen size from the canvas.
@@ -527,4 +514,26 @@ implements View.OnClickListener{
         findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
     }
 
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder backDialog = new AlertDialog.Builder(this);
+        backDialog.setTitle("Go Back");
+        backDialog.setMessage("Are you sure you want to go back?\nYou will loose all your progress");
+        backDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent startIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(startIntent);
+
+            }
+        });
+        backDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        backDialog.show();
+    }
 }
