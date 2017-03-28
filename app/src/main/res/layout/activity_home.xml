@@ -32,4 +32,15 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp" />
+
+    <ImageButton
+        android:id="@+id/tutorialButton"
+        android:background="#00000000"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/aboutButton"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerInside"
+        android:layout_marginBottom="5dp"
+        app:srcCompat="@drawable/tutorial" />
 </RelativeLayout>
