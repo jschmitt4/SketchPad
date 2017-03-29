@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +18,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,49 +33,35 @@ import java.util.UUID;
 
 public class SketchActivity extends AppCompatActivity
 implements View.OnClickListener{
-
-    //Array of all the buttons
-    public int display[] = {
-            R.id.util_Option1,  R.id.util_Option2,
-            R.id.shape_Option1, R.id.shape_Option2,
-            R.id.size_Option1,  R.id.size_Option2,
-            R.id.new_imageButton,
-            R.id.eraser_imageButton,
-            R.id.save_imageButton,
-            R.id.aliasing_imageButton};
-
-    private boolean menuOpen = false;
-    // Used for the Drawing and color paint
+    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE = 999;
+    Vibrator vb;
+    ImageButton selectView;
+    Animation selectAnimationShake;
+    Resources r;
+    public int display[], expandableOptions[];
     private DrawingView drawView;
     private ImageButton currPaint;
     private View lastView;
-    private int buttonSize;
-    private static final int MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE = 999;
-    private static final String TUTORIAL = "TUTORIAL_SHARED_PREFERENCE";
-    Vibrator vb;
-    private String lastColor = "#FF000000"; //Default
-    boolean erase = false;
-    boolean longClick = false;
-    boolean utilSwitched = false;
-    boolean shapeSwitched = false;
-    ImageButton selectView;
-    Animation selectAnimationShake;
+    private String lastColor;
+    private int clearColor, menuColor,strokeSize, buttonSize;
+    private boolean erase, menuOpen,longClick, utilSwitched, shapeSwitched, sizeSwitched;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sketch);
-        vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        defaultSetup();
-
+        intializeAndSetup();
+        hideAllExpansion();
+        displayButtons();
+        setOnClicks();
     }
 
     @Override
     public void onClick(View view) {
         vb.vibrate(10);
-        erase = false;
 
         if(view.getId() != R.id.menuButton){
+            erase = false;
             updateSelectView(view);
 
             if (view.getId() == R.id.util_Option1) {
@@ -79,21 +69,20 @@ implements View.OnClickListener{
                     if(!utilSwitched)setPencil();
                     else setMarker();
                     hideAllExpansion();
-
                     lastView = view;
                 }longClick = false;
+
             } else if (view.getId() == R.id.util_Option2) {
                 if(utilSwitched)setPencil();
                 else setMarker();
                 hideAllExpansion();
-
                 lastView = findViewById(R.id.util_Option1);
                 swap(view.getId());
+
             }  else if (view.getId() == R.id.shape_Option1) {
                 if(!longClick) {
                     if(!shapeSwitched)setLine();
                     else setRect();
-
                     lastView = view;
                     hideAllExpansion();
                 }longClick = false;
@@ -107,13 +96,15 @@ implements View.OnClickListener{
 
             }else if (view.getId() == R.id.size_Option1) {
                 if(!longClick) {
-                    if(lastView!= null) updateSelectView(lastView);
-                    else updateSelectView(findViewById(R.id.util_Option1));
+                    if(!sizeSwitched)setStroke(2);
+                    else setStroke(10);
                     hideAllExpansion();
+                    setDefaultSelect();
                 }longClick = false;
 
             } else if (view.getId() == R.id.size_Option2) {
-
+                swap(view.getId());
+                setDefaultSelect();
                 hideAllExpansion();
 
             }else if (view.getId() == R.id.eraser_imageButton) {
@@ -125,8 +116,7 @@ implements View.OnClickListener{
             } else if (view.getId() == R.id.new_imageButton) {
                 hideAllExpansion();
                 confirmClear();
-                if(lastView!= null) updateSelectView(lastView);
-                else updateSelectView(findViewById(R.id.util_Option1));
+                setDefaultSelect();
 
             } else if (view.getId() == R.id.aliasing_imageButton) {
                 ImageButton ib = (ImageButton) findViewById(R.id.aliasing_imageButton);
@@ -138,13 +128,11 @@ implements View.OnClickListener{
                     ib.setImageResource(R.drawable.noaa);
                 }
                 hideAllExpansion();
-                if(lastView!= null) updateSelectView(lastView);
-                else updateSelectView(findViewById(R.id.util_Option1));
+                setDefaultSelect();
             } else if(view.getId() == R.id.save_imageButton){
                 hideAllExpansion();
                 savePrompt();
-                if(lastView!= null) updateSelectView(lastView);
-                else updateSelectView(findViewById(R.id.util_Option1));
+                setDefaultSelect();
             }
             showPallet();
 
@@ -155,26 +143,164 @@ implements View.OnClickListener{
         }
     }
 
-    private void defaultSetup(){
-
-        drawView = (DrawingView)findViewById(R.id.drawingView);
-        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout
-        currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
-        currPaint.setImageResource(R.drawable.paint_pressed);
-        selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
-        selectView = (ImageButton) findViewById(R.id.util_Option1);
-        updateSelectView(selectView);
-        hideAllExpansion();
-        displayButtons();
-        setOnClicks();
+    /**
+     * Sets last view if the first select is not a utility/shape/eraser
+     */
+    private void setDefaultSelect(){
+        if(lastView!= null) updateSelectView(lastView);
+        else updateSelectView(findViewById(R.id.util_Option1));
     }
+
+    /**
+     * Sets the onClick Listeners and on LongClick Listeners
+     */
+    private void setOnClicks(){
+        findViewById(R.id.menuButton).setOnClickListener(this);
+
+        for(int id : display) findViewById(id).setOnClickListener(this);
+
+        for(int idExpand: expandableOptions) {
+            findViewById(idExpand).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    longClick = true;
+                    expand(view);
+                    return false;
+                }
+            });
+        }
+    }
+
+    private void setPencil(){
+        drawView.setColor(lastColor);
+        drawView.setCurrentMode("PENCIL");
+    }
+
+    private void setMarker(){
+        drawView.setColor(lastColor);
+        drawView.setCurrentMode("MARKER");
+        findViewById(R.id.utility_LL).setBackgroundColor(menuColor);
+    }
+
+    private void setLine(){
+        drawView.setColor(lastColor);
+        drawView.setCurrentMode("LINE");
+    }
+
+    private void setRect(){
+        drawView.setColor(lastColor);
+        drawView.setCurrentMode("RECT");
+    }
+
+    private void setStroke(int size){
+        strokeSize = size;
+        drawView.changeStrokeWidth(size);
+    }
+
+    /**
+     * Alertbox to confirm if the user wants to clear the screen
+     * If so clear
+     */
+    private void confirmClear(){
+
+        AlertDialog.Builder clearDialog = new AlertDialog.Builder(this);
+        clearDialog.setTitle("Clear Canvas");
+        clearDialog.setMessage("Are you sure you wanna clear your canvas?");
+        clearDialog.setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                drawView.newSheet();
+            }
+        });
+        clearDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        clearDialog.show();
+    }
+
+    /**
+     * This is the alert prompt when the user wants to save the file
+     */
+    private void savePrompt(){
+        AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+        saveDialog.setTitle("Save Sketch");
+        saveDialog.setMessage("Save sketch to your device?");
+        saveDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                drawView.setDrawingCacheEnabled(true);
+                checkSavePermission();
+            }
+        });
+        saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        saveDialog.show();
+    }
+
+    /**
+     * Android 6.0 and up
+     * They require a check of permission during run time for "Dangerous Permissions"
+     * This calls the check for permission. If granted calls the saveImage()
+     */
+    public void checkSavePermission(){
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE);
+
+        else if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) saveImage();
+
+        else Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * This is called on request to check for a permission.
+     * If granted calls saveImage()
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) saveImage();
+                return;
+            }
+        }
+    }
+
+    /**
+     * This method saves the file.
+     *
+     */
+    private void saveImage(){
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis()); // DATE HERE
+
+        String imgSaved = MediaStore.Images.Media.insertImage(
+                getContentResolver(), drawView.getDrawingCache(),
+                UUID.randomUUID().toString()+".png", "sketch");
+
+        if(imgSaved != null)Toast.makeText(getApplicationContext(), "Sketch Saved", Toast.LENGTH_SHORT).show();
+
+        else Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
+
+        drawView.destroyDrawingCache();
+    }
+
     /**
      * This takes the view from on click to show which option is clicked.
      * Highlights the button with white
      * @param v
      */
     public void updateSelectView(View v){
-
         for(int id : display){
             if(v.getId() == id){
                 selectView = (ImageButton) findViewById(id);
@@ -212,7 +338,6 @@ implements View.OnClickListener{
      * Hides or shows the options by clicking the menu button
      */
     private void displayButtons(){
-
         setButtonSizeByScreen();
         if(menuOpen) {
             findViewById(R.id.optionsLayout).setVisibility(View.VISIBLE);
@@ -232,173 +357,30 @@ implements View.OnClickListener{
     private void showPallet(){
         if(erase)findViewById(R.id.swatches).setVisibility(View.INVISIBLE);
         else findViewById(R.id.swatches).setVisibility(View.VISIBLE);
-
     }
-
-    private void setOnClicks(){
-        findViewById(R.id.menuButton).setOnClickListener(this);
-        for (int id : display) {
-            findViewById(id).setOnClickListener(this);
-        }
-        findViewById(R.id.util_Option1).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                longClick = true;
-                expand(view);
-                return false;
-            }
-        });
-
-        findViewById(R.id.shape_Option1).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                longClick = true;
-                expand(view);
-                return false;
-            }
-        });
-
-        findViewById(R.id.size_Option1).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                longClick = true;
-                expand(view);
-                return false;
-            }
-        });
-
-
-    }
-
-    private void confirmClear(){
-
-        AlertDialog.Builder clearDialog = new AlertDialog.Builder(this);
-        clearDialog.setTitle("Clear Canvas");
-        clearDialog.setMessage("Are you sure you wanna clear your canvas?");
-        clearDialog.setPositiveButton("Clear", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                drawView.newSheet();
-
-            }
-        });
-        clearDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        clearDialog.show();
-    }
-    /**
-     * This is the alert prompt when the user wants to save the file
-     */
-    private void savePrompt(){
-        AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-        saveDialog.setTitle("Save Sketch");
-        saveDialog.setMessage("Save sketch to your device?");
-        saveDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                drawView.setDrawingCacheEnabled(true);
-                checkSavePermission();
-
-            }
-        });
-        saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        saveDialog.show();
-    }
-
-    /**
-     * Android 6.0 and up
-     * They require a check of permission during run time for "Dangerous Permissions"
-     * This calls the check for permission. If granted calls the saveImage()
-     */
-    public void checkSavePermission(){
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE);
-        }else if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-            saveImage();
-        }else{
-            Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * This is called on request to check for a permission.
-     * If granted calls saveImage()
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_EXTERNAL_WRITE: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {saveImage();}
-                return;
-            }
-        }
-    }
-
-    /**
-     * This method saves the file.
-     *
-     */
-    private void saveImage(){
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis()); // DATE HERE
-        ContentResolver cr = this.getContentResolver();
-
-
-        String imgSaved = MediaStore.Images.Media.insertImage(
-                getContentResolver(), drawView.getDrawingCache(),
-                UUID.randomUUID().toString()+".png", "sketch");
-        Log.i("ID?",imgSaved);
-
-        if(imgSaved != null){
-            Toast.makeText(getApplicationContext(), "Sketch Saved", Toast.LENGTH_SHORT).show();
-        } else{
-            Toast.makeText(getApplicationContext(), "Sketch failed to save.", Toast.LENGTH_SHORT).show();
-        }
-        drawView.destroyDrawingCache();
-    }
-
 
     /**
      * Gets the screen size from the canvas.
      * This dynamically changes the size of the buttons so that it is correct on all screens
      */
     private void setButtonSizeByScreen(){
-        float height = View.MeasureSpec.getSize(drawView.getScreenHeight());
-        buttonSize = Math.round(height/(10));
+        int height = View.MeasureSpec.getSize(drawView.getScreenHeight());
+        Log.i("HEIGHT",""+height);
+        buttonSize = Math.round(height/(10));//In px
+        r = getResources();
+
         for(int i: display) {
             if(i == R.id.size_Option1){
-
-                findViewById(R.id.size_Option1_Container).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+                setStrokeView(i, 2);
 
             }else if(i == R.id.size_Option2){
-
-                findViewById(R.id.size_Option2_Container).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+                setStrokeView(i, 10);
             }
             else findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
         }
 
-        /**
-         * This sets the backdrop to be aligned with the drawingview and list options.
-         * This is done so even if I also the above layout's background it does change it.
-         */
+         //This sets the backdrop to be aligned with the drawingview and list options.
+         //This is done so even if I also the above layout's background it does change it.
         TextView tv = (TextView) findViewById(R.id.backdrop);
         tv.setLayoutParams(new RelativeLayout.LayoutParams(buttonSize, (buttonSize * 7)));
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tv.getLayoutParams();
@@ -407,28 +389,18 @@ implements View.OnClickListener{
 
     }
 
-    private void setPencil(){
-        drawView.setColor(lastColor);
-        drawView.changeStrokeWidth(2);
-        drawView.setCurrentMode("PENCIL");
-
-    }
-
-    private void setMarker(){
-        drawView.setColor(lastColor);
-        drawView.changeStrokeWidth(10);
-        drawView.setCurrentMode("MARKER");
-        findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#009999"));
-    }
-
-    private void setLine(){
-        drawView.setColor(lastColor);
-        drawView.setCurrentMode("LINE");
-    }
-
-    private void setRect(){
-        drawView.setColor(lastColor);
-        drawView.setCurrentMode("RECT");
+    /**
+     * Updates the stroke size in image view dynamically
+     * based on screen size
+     * @param id
+     * @param size
+     */
+    private void setStrokeView(int id, int size){
+        ImageButton strokeView = (ImageButton)findViewById(id);
+        strokeView.setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+        int strokePx = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, r.getDisplayMetrics()));
+        int padding = (buttonSize-strokePx)/2;
+        strokeView.setPadding(padding, padding, padding, padding);
 
     }
 
@@ -439,21 +411,21 @@ implements View.OnClickListener{
     private void expand(View v){
         if(v.getId() == R.id.util_Option1){
             findViewById(R.id.util_Option2).setVisibility(View.VISIBLE);
-            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#009999"));
-            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
-            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.utility_LL).setBackgroundColor(menuColor);
+            findViewById(R.id.shapes_LL).setBackgroundColor(clearColor);
+            findViewById(R.id.size_LL).setBackgroundColor(clearColor);
 
         }else if(v.getId() == R.id.shape_Option1){
             findViewById(R.id.shape_Option2).setVisibility(View.VISIBLE);
-            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#009999"));
-            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
-            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.shapes_LL).setBackgroundColor(menuColor);
+            findViewById(R.id.utility_LL).setBackgroundColor(clearColor);
+            findViewById(R.id.size_LL).setBackgroundColor(clearColor);
         }
         else if(v.getId() == R.id.size_Option1){
-            findViewById(R.id.size_Option2_Container).setVisibility(View.VISIBLE);
-            findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#009999"));
-            findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
-            findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
+            findViewById(R.id.size_Option2).setVisibility(View.VISIBLE);
+            findViewById(R.id.size_LL).setBackgroundColor(menuColor);
+            findViewById(R.id.utility_LL).setBackgroundColor(clearColor);
+            findViewById(R.id.shapes_LL).setBackgroundColor(clearColor);
         }
     }
 
@@ -461,42 +433,47 @@ implements View.OnClickListener{
      * This method, swaps the images for the slide out buttons
      * @param id
      */
-    private void swap(int id){ //2
-
+    private void swap(int id){
+        ImageButton ib = (ImageButton) findViewById(id);
         if(id == R.id.util_Option2) {
+            ImageButton ib2;
             if(!utilSwitched){
-                ImageButton ib = (ImageButton) findViewById(id);
                 ib.setImageResource(R.drawable.pencil);
-                ImageButton ib2 = (ImageButton) findViewById(R.id.util_Option1);
+                ib2 = (ImageButton) findViewById(R.id.util_Option1);
                 ib2.setImageResource(R.drawable.marker);
-                updateSelectView(ib2);
                 utilSwitched = true;
             }else{
-                ImageButton ib = (ImageButton) findViewById(id);
                 ib.setImageResource(R.drawable.marker);
-                ImageButton ib2 = (ImageButton) findViewById(R.id.util_Option1);
+                ib2 = (ImageButton) findViewById(R.id.util_Option1);
                 ib2.setImageResource(R.drawable.pencil);
-
                 utilSwitched = false;
-                updateSelectView(ib2);
             }
-
+            updateSelectView(ib2);
         }else if(id == R.id.shape_Option2){
+            ImageButton ib2;
             if(!shapeSwitched){
-                ImageButton ib = (ImageButton) findViewById(id);
                 ib.setImageResource(R.drawable.line);
-                ImageButton ib2 = (ImageButton) findViewById(R.id.shape_Option1);
+                ib2 = (ImageButton) findViewById(R.id.shape_Option1);
                 ib2.setImageResource(R.drawable.rectangle);
-                updateSelectView(ib2);
                 shapeSwitched = true;
             }else{
-                ImageButton ib = (ImageButton) findViewById(id);
                 ib.setImageResource(R.drawable.rectangle);
-                ImageButton ib2 = (ImageButton) findViewById(R.id.shape_Option1);
+                ib2 = (ImageButton) findViewById(R.id.shape_Option1);
                 ib2.setImageResource(R.drawable.line);
-
                 shapeSwitched = false;
-                updateSelectView(ib2);
+            }
+            updateSelectView(ib2);
+        }else if(id == R.id.size_Option2){
+            if(strokeSize == 2){
+                setStrokeView(id,2);
+                setStrokeView(R.id.size_Option1, 10);
+                setStroke(10);
+                sizeSwitched = true;
+            }else{
+                setStrokeView(id,10);
+                setStrokeView(R.id.size_Option1, 2);
+                setStroke(2);
+                sizeSwitched = false;
             }
         }
     }
@@ -507,16 +484,19 @@ implements View.OnClickListener{
     private void hideAllExpansion(){
         findViewById(R.id.util_Option2).setVisibility(View.INVISIBLE);
         findViewById(R.id.shape_Option2).setVisibility(View.INVISIBLE);
-        findViewById(R.id.size_Option2_Container).setVisibility(View.INVISIBLE);
+        findViewById(R.id.size_Option2).setVisibility(View.INVISIBLE);
 
-        findViewById(R.id.utility_LL).setBackgroundColor(Color.parseColor("#00000000"));
-        findViewById(R.id.shapes_LL).setBackgroundColor(Color.parseColor("#00000000"));
-        findViewById(R.id.size_LL).setBackgroundColor(Color.parseColor("#00000000"));
+        findViewById(R.id.utility_LL).setBackgroundColor(clearColor);
+        findViewById(R.id.shapes_LL).setBackgroundColor(clearColor);
+        findViewById(R.id.size_LL).setBackgroundColor(clearColor);
     }
 
+    /**
+     * Confirmation alert to close out
+     * onBackPressed
+     */
     @Override
     public void onBackPressed() {
-
         AlertDialog.Builder backDialog = new AlertDialog.Builder(this);
         backDialog.setTitle("Go Back");
         backDialog.setMessage("Are you sure you want to go back?\nYou will loose all your progress");
@@ -525,7 +505,6 @@ implements View.OnClickListener{
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent startIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(startIntent);
-
             }
         });
         backDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -535,5 +514,39 @@ implements View.OnClickListener{
             }
         });
         backDialog.show();
+    }
+
+    /**
+     * Sets up all the variables
+     * Just to clean up the on create/top of the code
+     */
+    private void intializeAndSetup(){
+        vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        lastColor = "#FF000000";
+        clearColor = Color.parseColor("#00000000");
+        menuColor = Color.parseColor("#009999");
+        erase = false;
+        longClick = false;
+        utilSwitched = false;
+        shapeSwitched = false;
+        sizeSwitched = false;
+        menuOpen = false;
+        display = new int [] {
+                    R.id.util_Option1,      R.id.util_Option2, R.id.shape_Option1,
+                    R.id.shape_Option2,     R.id.size_Option1, R.id.size_Option2,
+                    R.id.new_imageButton,   R.id.eraser_imageButton,
+                    R.id.save_imageButton,  R.id.aliasing_imageButton};
+        expandableOptions = new int [] {
+                R.id.util_Option1, R.id.shape_Option1, R.id.size_Option1};
+
+        drawView = (DrawingView)findViewById(R.id.drawingView);
+        LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout
+        currPaint = (ImageButton)paintLayout.getChildAt(5); //Black color
+        currPaint.setImageResource(R.drawable.paint_pressed);
+        selectAnimationShake = AnimationUtils.loadAnimation(this, R.anim.select);
+        selectView = (ImageButton) findViewById(R.id.util_Option1);
+        updateSelectView(selectView);
+
+
     }
 }
