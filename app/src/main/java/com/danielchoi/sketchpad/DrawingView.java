@@ -164,8 +164,6 @@ public class DrawingView extends View {
         return true;
     }
     public void setColor(String newColor){
-        //set color
-        invalidate();
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
     }
@@ -173,8 +171,6 @@ public class DrawingView extends View {
     public void changeStrokeWidth(int dp){
         strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,dp,dm);
         drawPaint.setStrokeWidth(strokeWidth);
-        drawPaint.setStrokeCap(Paint.Cap.ROUND);
-        drawPaint.setColor(paintColor);
     }
 
     public void eraser(){
