@@ -40,7 +40,7 @@ public class DrawingView extends View {
     public int screenHeight;
     public Rect rect;
     private DisplayMetrics dm;
-    public enum Mode {PENCIL, MARKER, LINE, RECT};
+    public enum Mode {PENCIL, MARKER, LINE, RECT, ERASER};
     private Mode currentMode = Mode.PENCIL;
     boolean alias = true;
 
@@ -115,7 +115,7 @@ public class DrawingView extends View {
         float touchX = event.getX();
         float touchY = event.getY();
 
-        if(currentMode == Mode.PENCIL || currentMode == Mode.MARKER) {
+        if(currentMode == Mode.PENCIL || currentMode == Mode.MARKER || currentMode == Mode.ERASER) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     drawPath.moveTo(touchX, touchY);
@@ -173,13 +173,6 @@ public class DrawingView extends View {
         drawPaint.setStrokeWidth(strokeWidth);
     }
 
-    public void eraser(){
-        strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,dm);
-        drawPaint.setColor(white);
-        drawPaint.setStrokeWidth(strokeWidth);
-        drawPaint.setStrokeCap(Paint.Cap.SQUARE);
-    }
-
     public void newSheet(){
         drawCanvas.drawColor(white);
         invalidate();
@@ -210,6 +203,11 @@ public class DrawingView extends View {
                 currentMode = Mode.RECT;
                 drawPaint.setStrokeCap(Paint.Cap.SQUARE);
                 drawPaint.setStyle(Paint.Style.FILL);
+                break;
+            case "ERASER":
+                currentMode = Mode.ERASER;
+                drawPaint.setColor(white);
+                drawPaint.setStrokeCap(Paint.Cap.SQUARE);
                 break;
             default:
                 currentMode = Mode.PENCIL;

@@ -108,9 +108,9 @@ implements View.OnClickListener{
                 hideAllExpansion();
 
             }else if (view.getId() == R.id.eraser_imageButton) {
-                drawView.setCurrentMode("DRAW");
                 erase = true;
-                drawView.eraser(); //Selects eraser
+                lastView = view;
+                drawView.setCurrentMode("ERASER"); //Selects eraser
                 hideAllExpansion();
 
             } else if (view.getId() == R.id.new_imageButton) {
@@ -435,6 +435,7 @@ implements View.OnClickListener{
      */
     private void swap(int id){
         ImageButton ib = (ImageButton) findViewById(id);
+
         if(id == R.id.util_Option2) {
             ImageButton ib2;
             if(!utilSwitched){
@@ -464,6 +465,7 @@ implements View.OnClickListener{
             }
             updateSelectView(ib2);
         }else if(id == R.id.size_Option2){
+            Log.i("called", "swap");
             if(strokeSize == 2){
                 setStrokeView(id,2);
                 setStrokeView(R.id.size_Option1, 10);
@@ -531,6 +533,7 @@ implements View.OnClickListener{
         shapeSwitched = false;
         sizeSwitched = false;
         menuOpen = false;
+        strokeSize = 2;
         display = new int [] {
                     R.id.util_Option1,      R.id.util_Option2, R.id.shape_Option1,
                     R.id.shape_Option2,     R.id.size_Option1, R.id.size_Option2,
