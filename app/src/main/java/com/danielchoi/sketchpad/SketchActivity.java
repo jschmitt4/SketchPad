@@ -43,8 +43,8 @@ implements View.OnClickListener{
     private ImageButton currPaint;
     private View lastView;
     private String lastColor;
-    private int clearColor, menuColor,strokeSize, buttonSize;
-    private boolean erase, menuOpen,longClick, utilSwitched, shapeSwitched, sizeSwitched;
+    private int clearColor, menuColor, strokeSize, buttonSize;
+    private boolean erase, menuOpen,longClick, utilSwitched, shapeSwitched;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +96,10 @@ implements View.OnClickListener{
 
             }else if (view.getId() == R.id.size_Option1) {
                 if(!longClick) {
-                    if(!sizeSwitched)setStroke(2);
-                    else setStroke(10);
+                    setStrokeView();
                     hideAllExpansion();
                     setDefaultSelect();
                 }longClick = false;
-
-            } else if (view.getId() == R.id.size_Option2) {
-                swap(view.getId());
-                setDefaultSelect();
-                hideAllExpansion();
 
             }else if (view.getId() == R.id.eraser_imageButton) {
                 erase = true;
@@ -169,6 +163,20 @@ implements View.OnClickListener{
                 }
             });
         }
+        findViewById(R.id.size_Option1).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                longClick = true;
+                if(strokeSize>=0 && strokeSize < 10)strokeSize = 10;
+                else if (strokeSize >=10 && strokeSize < 20)strokeSize = 20;
+                else if (strokeSize >=20 && strokeSize < 30)strokeSize = 30;
+                else if (strokeSize >=30 && strokeSize < 40)strokeSize = 40;
+                else strokeSize = 0;
+
+                setStrokeView();
+                return false;
+            }
+        });
     }
 
     private void setPencil(){
@@ -192,10 +200,6 @@ implements View.OnClickListener{
         drawView.setCurrentMode("RECT");
     }
 
-    private void setStroke(int size){
-        strokeSize = size;
-        drawView.changeStrokeWidth(size);
-    }
 
     /**
      * Alertbox to confirm if the user wants to clear the screen
@@ -371,12 +375,8 @@ implements View.OnClickListener{
 
         for(int i: display) {
             if(i == R.id.size_Option1){
-                setStrokeView(i, 2);
-
-            }else if(i == R.id.size_Option2){
-                setStrokeView(i, 10);
-            }
-            else findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
+                setStrokeView();
+            }else findViewById(i).setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
         }
 
          //This sets the backdrop to be aligned with the drawingview and list options.
@@ -392,15 +392,23 @@ implements View.OnClickListener{
     /**
      * Updates the stroke size in image view dynamically
      * based on screen size
-     * @param id
-     * @param size
      */
-    private void setStrokeView(int id, int size){
-        ImageButton strokeView = (ImageButton)findViewById(id);
+    private void setStrokeView(){
+        ImageButton strokeView = (ImageButton)findViewById(R.id.size_Option1);
         strokeView.setLayoutParams(new LinearLayout.LayoutParams(buttonSize, buttonSize));
-        int strokePx = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, r.getDisplayMetrics()));
+
+        strokeSize+=1 ;
+        int strokePx = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, strokeSize, r.getDisplayMetrics()));
         int padding = (buttonSize-strokePx)/2;
+
+        if(buttonSize-strokePx < 0 ){
+            strokeSize = 2;
+            strokePx = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, strokeSize, r.getDisplayMetrics()));
+            padding = (buttonSize-strokePx)/2;
+        }
+
         strokeView.setPadding(padding, padding, padding, padding);
+        drawView.changeStrokeWidth(strokeSize);
 
     }
 
@@ -420,12 +428,7 @@ implements View.OnClickListener{
             findViewById(R.id.shapes_LL).setBackgroundColor(menuColor);
             findViewById(R.id.utility_LL).setBackgroundColor(clearColor);
             findViewById(R.id.size_LL).setBackgroundColor(clearColor);
-        }
-        else if(v.getId() == R.id.size_Option1){
-            findViewById(R.id.size_Option2).setVisibility(View.VISIBLE);
-            findViewById(R.id.size_LL).setBackgroundColor(menuColor);
-            findViewById(R.id.utility_LL).setBackgroundColor(clearColor);
-            findViewById(R.id.shapes_LL).setBackgroundColor(clearColor);
+
         }
     }
 
@@ -464,21 +467,9 @@ implements View.OnClickListener{
                 shapeSwitched = false;
             }
             updateSelectView(ib2);
-        }else if(id == R.id.size_Option2){
-            Log.i("called", "swap");
-            if(strokeSize == 2){
-                setStrokeView(id,2);
-                setStrokeView(R.id.size_Option1, 10);
-                setStroke(10);
-                sizeSwitched = true;
-            }else{
-                setStrokeView(id,10);
-                setStrokeView(R.id.size_Option1, 2);
-                setStroke(2);
-                sizeSwitched = false;
-            }
         }
     }
+
 
     /**
      * This hides all the "exapansion" from the long presses
@@ -486,7 +477,6 @@ implements View.OnClickListener{
     private void hideAllExpansion(){
         findViewById(R.id.util_Option2).setVisibility(View.INVISIBLE);
         findViewById(R.id.shape_Option2).setVisibility(View.INVISIBLE);
-        findViewById(R.id.size_Option2).setVisibility(View.INVISIBLE);
 
         findViewById(R.id.utility_LL).setBackgroundColor(clearColor);
         findViewById(R.id.shapes_LL).setBackgroundColor(clearColor);
@@ -531,16 +521,14 @@ implements View.OnClickListener{
         longClick = false;
         utilSwitched = false;
         shapeSwitched = false;
-        sizeSwitched = false;
         menuOpen = false;
-        strokeSize = 2;
+        strokeSize = 0;
         display = new int [] {
-                    R.id.util_Option1,      R.id.util_Option2, R.id.shape_Option1,
-                    R.id.shape_Option2,     R.id.size_Option1, R.id.size_Option2,
-                    R.id.new_imageButton,   R.id.eraser_imageButton,
+                    R.id.util_Option1,      R.id.util_Option2,      R.id.shape_Option1,
+                    R.id.shape_Option2,     R.id.size_Option1,      R.id.new_imageButton,   R.id.eraser_imageButton,
                     R.id.save_imageButton,  R.id.aliasing_imageButton};
         expandableOptions = new int [] {
-                R.id.util_Option1, R.id.shape_Option1, R.id.size_Option1};
+                R.id.util_Option1, R.id.shape_Option1};
 
         drawView = (DrawingView)findViewById(R.id.drawingView);
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paintSwatchLayoutRow2); // Paint Swatch Layout

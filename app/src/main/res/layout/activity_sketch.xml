@@ -326,40 +326,20 @@
             android:id="@+id/size_LL"
             >
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/size_Option1_Container">
 
-                <ImageButton
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:srcCompat="@drawable/dot"
-                    android:id="@+id/size_Option1"
-                    android:scaleType="fitXY"
-                    android:background="#00000000"
-                    android:contentDescription="@string/paint"/>
-            </RelativeLayout>
+            <ImageButton
+                android:id="@+id/size_Option1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"
+                android:scaleType="fitXY"
+                android:tag="1"
+                app:srcCompat="@drawable/dot" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/size_Option2_Container">
 
-                <ImageButton
-
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:srcCompat="@drawable/dot"
-                    android:id="@+id/size_Option2"
-                    android:scaleType="fitXY"
-                    android:background="#00000000"
-                    android:contentDescription="@string/paint"/>
-            </RelativeLayout>
 
         </LinearLayout>
 
