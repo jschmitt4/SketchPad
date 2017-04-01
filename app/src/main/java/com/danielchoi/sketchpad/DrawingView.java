@@ -207,6 +207,7 @@ public class DrawingView extends View {
             case "ERASER":
                 currentMode = Mode.ERASER;
                 drawPaint.setColor(white);
+                drawPaint.setStyle(Paint.Style.STROKE);
                 drawPaint.setStrokeCap(Paint.Cap.SQUARE);
                 break;
             default:
