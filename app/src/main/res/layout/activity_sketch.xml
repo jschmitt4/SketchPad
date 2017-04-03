@@ -9,115 +9,25 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.danielchoi.sketchpad.SketchActivity">
+    tools:context="com.danielchoi.sketchpad.SketchActivity"
+    android:background="#000">
 
     <com.danielchoi.sketchpad.DrawingView
-        android:id="@+id/drawing"
+        android:id="@+id/drawingView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFFFF"/>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/optionsLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:background="#009999"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true">
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/newfile"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:id="@+id/new_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/paint"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/open"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:id="@+id/open_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/paint"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/save"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:id="@+id/save_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/paint"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/pencil"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:id="@+id/pencil_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/paint"/>
-
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/rectangle"
-            android:id="@+id/rect_imageButton"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:scaleType="fitXY"
-            android:background="#00000000" />
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/eraser"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:id="@+id/eraser_imageButton"
-            android:scaleType="fitXY"
-            android:background="#00000000"
-            android:contentDescription="@string/paint"/>
-
-    </LinearLayout>
+        android:background="#FFFFFFFF"
+        android:layout_above="@+id/menuButton" />
 
     <!-- Layout for paint swatches that use the paint.xml file -->
 
     <ImageButton
         android:layout_width="50dp"
-        app:srcCompat="@drawable/circle_menu"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        app:srcCompat="@drawable/menu"
+        android:layout_margin="4dp"
         android:background="#00000000"
         android:id="@+id/menuButton"
         android:scaleType="fitXY"
@@ -278,5 +188,180 @@
             android:tag="#FF000000" />
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="400dp"
+        android:id="@+id/backdrop"
+        android:layout_alignTop="@+id/drawingView"
+        android:layout_alignEnd="@+id/drawingView"
+        android:background="#009999"
+        />
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/optionsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/drawingView"
+        android:layout_alignEnd="@+id/drawingView"
+        >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/newfile"
+                android:id="@+id/new_imageButton"
+                android:scaleType="fitXY"
+                android:padding="2dp"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/save"
+                android:id="@+id/save_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/save"/>
+        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/utility_LL"
+                android:orientation="horizontal"
+                android:layoutDirection="rtl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/pencil"
+                    android:id="@+id/util_Option1"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="pencil"
+                    />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/marker"
+                    android:id="@+id/util_Option2"
+                    android:scaleType="fitXY"
+                    android:background="#00000000"
+                    android:contentDescription="marker"
+                    />
+
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/shapes_LL"
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/line"
+                android:id="@+id/shape_Option1"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="line"/>
+
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/rectangle"
+                android:id="@+id/shape_Option2"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="rectangle"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="4dp"
+                app:srcCompat="@drawable/eraser"
+                android:id="@+id/eraser_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:id="@+id/size_LL"
+            >
+
+
+            <ImageButton
+                android:id="@+id/size_Option1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"
+                android:scaleType="fitXY"
+                android:tag="1"
+                app:srcCompat="@drawable/dot" />
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layoutDirection="rtl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            >
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="4dp"
+                app:srcCompat="@drawable/aa"
+                android:id="@+id/aliasing_imageButton"
+                android:scaleType="fitXY"
+                android:background="#00000000"
+                android:contentDescription="@string/paint"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </RelativeLayout>
